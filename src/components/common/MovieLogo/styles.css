@@ -1,0 +1,32 @@
+/* ================================================================
+   MOVIE LOGO (fanart.tv)
+   ================================================================ */
+/* Logo image — transparent PNG from fanart.tv */
+.movie-logo-img {
+    display: block;
+    height: auto;
+    animation: logoFadeIn 0.5s ease both;
+}
+
+/* Text fallback — inherits the parent's text styling */
+.movie-logo-text {
+    display: inline;
+}
+
+@keyframes logoFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Watch-page specific logo sizing */
+.watch-title .movie-logo-img {
+    max-height: 80px;
+    filter: drop-shadow(0 2px 16px rgba(0, 0, 0, 0.5));
+}
