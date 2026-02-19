@@ -1,22 +1,22 @@
 /**
- * HeroBanner.jsx — Sliding Spotlight Carousel
+ * HeroBanner.jsx — Sliding Spotlight Carousel with Trailer Playback
  * ─────────────────────────────────────────────────────────────
- * All slides are laid out in a horizontal track.
- * Navigation moves the track with CSS transform: translateX,
- * giving a smooth, blink-free slide animation.
- *
- * • receives movies[] array (up to 5 from Dashboard)
- * • useState(activeIndex) tracks current slide
- * • useEffect auto-advances every 6 s with clearInterval cleanup
- * • Dot clicks and arrow clicks jump to any slide
+ * Netflix-style hero banner:
+ *  • YouTube trailer plays immediately, always muted
+ *  • Trailer covers the entire spotlight area (fullscreen)
+ *  • Backdrop image only used as fallback if no trailer exists
+ *  • Auto-advance pauses while trailer plays
+ *  • Trailers fetched from TMDB /movie/{id}/videos endpoint
  * ─────────────────────────────────────────────────────────────
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MovieLogo from './MovieLogo';
 
 const TMDB_BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
-const INTERVAL_MS = 6000;
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+const INTERVAL_MS = 8000;
 
 const HeroBanner = ({ movies = [] }) => {
     const navigate = useNavigate();
@@ -24,31 +24,103 @@ const HeroBanner = ({ movies = [] }) => {
     const timerRef = useRef(null);
 
     const [activeIndex, setActiveIndex] = useState(0);
+    const [trailerKeys, setTrailerKeys] = useState({});   // { movieId: youtubeKey }
+    const [trailerReady, setTrailerReady] = useState(false);
 
-    /* ── Go to slide, reset auto-advance timer ── */
-    const goTo = useCallback((idx) => {
-        setActiveIndex(idx);
-        // Reset interval so it counts from the moment user clicks
-        if (timerRef.current) clearInterval(timerRef.current);
-        timerRef.current = setInterval(() => {
-            setActiveIndex(prev => (prev + 1) % total);
-        }, INTERVAL_MS);
-    }, [total]);
-
-    /* ── Auto-advance on mount ── */
+    /* ── Fetch trailers for all hero movies on mount ── */
     useEffect(() => {
+        if (!total || !TMDB_API_KEY) return;
+
+        const fetchTrailers = async () => {
+            const keys = {};
+            await Promise.all(
+                movies.slice(0, 5).map(async (movie) => {
+                    try {
+                        const res = await fetch(
+                            `https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${TMDB_API_KEY}&language=en-US`
+                        );
+                        if (!res.ok) return;
+                        const data = await res.json();
+                        const results = data.results || [];
+
+                        // Priority: Official Trailer → Trailer → Teaser → any YouTube
+                        const official = results.find(
+                            v => v.site === 'YouTube' && v.type === 'Trailer' && v.official
+                        );
+                        const trailer = results.find(
+                            v => v.site === 'YouTube' && v.type === 'Trailer'
+                        );
+                        const teaser = results.find(
+                            v => v.site === 'YouTube' && v.type === 'Teaser'
+                        );
+                        const any = results.find(v => v.site === 'YouTube');
+
+                        const pick = official || trailer || teaser || any;
+                        if (pick) keys[movie.id] = pick.key;
+                    } catch (_) { }
+                })
+            );
+            setTrailerKeys(keys);
+        };
+
+        fetchTrailers();
+    }, [movies, total]);
+
+    /* ── Start/stop auto-advance ── */
+    const startAutoAdvance = useCallback(() => {
+        if (timerRef.current) clearInterval(timerRef.current);
         if (total < 2) return;
         timerRef.current = setInterval(() => {
             setActiveIndex(prev => (prev + 1) % total);
         }, INTERVAL_MS);
-        return () => clearInterval(timerRef.current);
     }, [total]);
+
+    const stopAutoAdvance = useCallback(() => {
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }, []);
+
+    /* ── Go to slide ── */
+    const goTo = useCallback((idx) => {
+        setActiveIndex(idx);
+        setTrailerReady(false);
+        startAutoAdvance();
+    }, [startAutoAdvance]);
+
+    /* ── Auto-advance on mount ── */
+    useEffect(() => {
+        startAutoAdvance();
+        return () => stopAutoAdvance();
+    }, [startAutoAdvance, stopAutoAdvance]);
+
+    /* ── When trailer starts playing, pause auto-advance ── */
+    useEffect(() => {
+        if (trailerReady) {
+            stopAutoAdvance();
+        }
+    }, [trailerReady, stopAutoAdvance]);
+
+    /* ── Reset trailer ready state on slide change ── */
+    useEffect(() => {
+        setTrailerReady(false);
+    }, [activeIndex]);
 
     /* ── Keyboard accessibility ── */
     const handleKey = (e) => {
         if (e.key === 'ArrowRight') goTo((activeIndex + 1) % total);
         if (e.key === 'ArrowLeft') goTo((activeIndex - 1 + total) % total);
     };
+
+    // Current movie & trailer
+    const currentMovie = movies[activeIndex];
+    const currentTrailerKey = currentMovie ? trailerKeys[currentMovie.id] : null;
+
+    // YouTube embed URL — always muted, no controls, autoplay, loop
+    const ytEmbedUrl = currentTrailerKey
+        ? `https://www.youtube.com/embed/${currentTrailerKey}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&loop=1&playlist=${currentTrailerKey}&start=5&enablejsapi=1&origin=${window.location.origin}`
+        : null;
 
     // ── Skeleton while TMDB data loads ─────────────────────────
     if (!total) {
@@ -68,9 +140,8 @@ const HeroBanner = ({ movies = [] }) => {
         >
             {/*
         ── SLIDE TRACK ──────────────────────────────────────────
-        All backdrop images in a flex row.
-        transform: translateX(−activeIndex × 100%) slides them.
-        transition makes it smooth — no opacity swap, no blink.
+        Backdrop images — only shown as fallback when no trailer.
+        When a trailer is ready it covers this entirely.
       */}
             <div
                 className="hero-track"
@@ -87,7 +158,6 @@ const HeroBanner = ({ movies = [] }) => {
                                 }}
                             />
                         )}
-                        {/* Per-slide gradient overlays */}
                         <div className="hero-grad-left" />
                         <div className="hero-grad-bottom" />
                         <div className="hero-grad-top" />
@@ -96,22 +166,45 @@ const HeroBanner = ({ movies = [] }) => {
             </div>
 
             {/*
+        ── TRAILER LAYER ─────────────────────────────────────────
+        YouTube iframe covers the entire spotlight area.
+        Shown immediately — no delay, no backdrop-first.
+      */}
+            {ytEmbedUrl && (
+                <div className={`hero-trailer-wrap ${trailerReady ? 'hero-trailer-wrap--visible' : ''}`}>
+                    <iframe
+                        key={currentTrailerKey}
+                        src={ytEmbedUrl}
+                        title={`${currentMovie.title} trailer`}
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                        className="hero-trailer-iframe"
+                        onLoad={() => setTrailerReady(true)}
+                    />
+                    {/* Gradient overlays on top of the trailer */}
+                    <div className="hero-grad-left" />
+                    <div className="hero-grad-bottom" />
+                    <div className="hero-grad-top" />
+                </div>
+            )}
+
+            {/*
         ── CONTENT LAYER ─────────────────────────────────────────
-        Lives above the track, always visible.
-        Transitions the text with a subtle translateY + opacity
-        whenever activeIndex changes.
       */}
             <div className="hero-content" key={activeIndex}>
-                {/* Eyebrow */}
                 <p className="hero-eyebrow">
                     🎬 Spotlight&nbsp;
                     <span className="hero-eyebrow__num">#{activeIndex + 1}</span>
                 </p>
 
-                {/* Title */}
-                <h1 className="hero-title">{movies[activeIndex].title}</h1>
+                <h1 className="hero-title">
+                    <MovieLogo
+                        tmdbId={movies[activeIndex].id}
+                        title={movies[activeIndex].title}
+                        maxHeight="120px"
+                    />
+                </h1>
 
-                {/* Meta badge row */}
                 <div className="hero-meta">
                     {movies[activeIndex].release_date && (
                         <span className="hero-meta__year">
@@ -130,7 +223,6 @@ const HeroBanner = ({ movies = [] }) => {
                     <span className="hero-meta__hd">HD</span>
                 </div>
 
-                {/* Synopsis */}
                 {movies[activeIndex].overview && (
                     <p className="hero-overview">
                         {movies[activeIndex].overview.length > 180
@@ -139,7 +231,6 @@ const HeroBanner = ({ movies = [] }) => {
                     </p>
                 )}
 
-                {/* CTA buttons */}
                 <div className="hero-actions">
                     <button
                         className="hero-btn-primary"
@@ -190,7 +281,7 @@ const HeroBanner = ({ movies = [] }) => {
                 </>
             )}
 
-            {/* ── Dot indicators — centered bottom ── */}
+            {/* ── Dot indicators ── */}
             <div className="hero-dots-bar" role="tablist" aria-label="Spotlight slides">
                 {Array.from({ length: total }).map((_, i) => (
                     <button
