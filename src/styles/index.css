@@ -1,0 +1,348 @@
+/* ============================================================
+   VibeReel — Global Styles
+   Tailwind CSS v4 is imported via the @import directive.
+   Custom design tokens, animations, and overrides live here.
+   ============================================================ */
+
+@import "tailwindcss";
+
+/* ── Custom design tokens (CSS variables) ── */
+:root {
+  --vr-bg:         #0a0a0f;
+  --vr-surface:    #12121a;
+  --vr-surface2:   #1c1c28;
+  --vr-border:     rgba(255,255,255,0.07);
+  --vr-accent:     #a855f7;       /* violet-500  */
+  --vr-accent2:    #7c3aed;       /* violet-700  */
+  --vr-gold:       #f59e0b;       /* amber-500   */
+  --vr-text:       #f1f0f5;
+  --vr-muted:      #8b8a9a;
+  --vr-radius:     12px;
+  --vr-card-radius: 16px;
+}
+
+/* ── Base reset ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--vr-bg);
+  color: var(--vr-text);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--vr-surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--vr-accent2);
+  border-radius: 3px;
+}
+
+/* ── Keyframe animations ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { box-shadow: 0 0 16px rgba(168,85,247,0.3); }
+  50%       { box-shadow: 0 0 32px rgba(168,85,247,0.7); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Utility classes ── */
+.fade-in-up {
+  animation: fadeInUp 0.5s ease both;
+}
+
+.pulse-glow {
+  animation: pulseGlow 2.5s ease-in-out infinite;
+}
+
+/* ── Skeleton loader ── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--vr-surface2) 25%,
+    rgba(255,255,255,0.06) 50%,
+    var(--vr-surface2) 75%
+  );
+  background-size: 400px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: var(--vr-card-radius);
+}
+
+/* ── Glass card ── */
+.glass {
+  background: rgba(28, 28, 40, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--vr-border);
+}
+
+/* ── Match badge pill ── */
+.match-badge {
+  background: linear-gradient(135deg, #a855f7, #7c3aed);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ── Toggle pill ── */
+.toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  background: var(--vr-surface2);
+  border: 1px solid var(--vr-border);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.toggle-pill button {
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  color: var(--vr-muted);
+  background: transparent;
+}
+
+.toggle-pill button.active {
+  background: linear-gradient(135deg, var(--vr-accent), var(--vr-accent2));
+  color: #fff;
+  box-shadow: 0 4px 18px rgba(168,85,247,0.4);
+}
+
+/* ── Movie grid ── */
+.movie-grid {
+  display: grid;
+  /* Tailwind-style responsive grid via CSS  */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ── Movie Card ── */
+.movie-card {
+  position: relative;
+  border-radius: var(--vr-card-radius);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--vr-surface2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.movie-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 2px var(--vr-accent);
+}
+
+.movie-card img {
+  width: 100%;
+  aspect-ratio: 2/3;
+  object-fit: cover;
+  display: block;
+}
+
+.movie-card .card-info {
+  padding: 0.75rem;
+  background: linear-gradient(0deg, rgba(10,10,15,0.98) 0%, rgba(18,18,26,0.85) 100%);
+}
+
+.movie-card .card-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--vr-text);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.movie-card .card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.4rem;
+}
+
+.movie-card .card-year {
+  font-size: 0.72rem;
+  color: var(--vr-muted);
+}
+
+.movie-card .card-rating {
+  font-size: 0.72rem;
+  color: var(--vr-gold);
+  font-weight: 700;
+}
+
+/* ── Overlay on card hover ── */
+.movie-card .card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(168,85,247,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .card-overlay {
+  opacity: 1;
+}
+
+.card-play-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255,255,255,0.35);
+}
+
+/* ── StatusCard ── */
+.status-card {
+  background: var(--vr-surface2);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-card .sc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.status-card .sc-label {
+  font-size: 0.72rem;
+  color: var(--vr-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.status-card .sc-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--vr-text);
+  line-height: 1;
+}
+
+/* ── Header ── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 15, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--vr-border);
+}
+
+/* ── Watch page iframe wrapper ── */
+.player-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;   /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--vr-card-radius);
+  background: #000;
+}
+
+.player-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ── ML Insight panel ── */
+.ml-insight-panel {
+  background: var(--vr-surface2);
+  border: 1px solid var(--vr-border);
+  border-left: 3px solid var(--vr-accent);
+  border-radius: var(--vr-radius);
+  padding: 1.25rem 1.5rem;
+}
+
+/* ── Spinner ── */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--vr-surface2);
+  border-top-color: var(--vr-accent);
+  border-radius: 50%;
+  animation: spin-slow 0.8s linear infinite;
+}
+
+/* ── Section divider ── */
+.section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--vr-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--vr-border);
+}
