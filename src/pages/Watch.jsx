@@ -199,7 +199,7 @@ const Watch = () => {
             <footer className="site-footer">
                 <div className="site-footer__inner">
                     <span className="site-footer__logo">VibeReel</span>
-                    <p>AppDev Lab 3 · Streaming via Videasy · Data from TMDB</p>
+                    <p>Streaming via Videasy · Data from TMDB</p>
                     <p>© 2026 VibeReel</p>
                 </div>
             </footer>

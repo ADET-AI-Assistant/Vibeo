@@ -264,7 +264,7 @@ const Dashboard = () => {
             <footer className="site-footer">
                 <div className="site-footer__inner">
                     <span className="site-footer__logo">VibeReel</span>
-                    <p>AppDev Lab 3 · Powered by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> &amp; <a href="https://videasy.net/" target="_blank" rel="noopener">Videasy</a></p>
+                    <p>Powered by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> &amp; <a href="https://videasy.net/" target="_blank" rel="noopener">Videasy</a></p>
                     <p>© 2026 VibeReel</p>
                 </div>
             </footer>
