@@ -18,8 +18,8 @@
 
 import { useState, useEffect } from 'react';
 
-// TMDB API key – ideally stored in .env as VITE_TMDB_KEY
-const TMDB_API_KEY = '05a3f3071ad3fa222ab689fb62ed0df1';
+// TMDB API key – loaded from .env (VITE_TMDB_API_KEY)
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 
 const useTMDB = () => {

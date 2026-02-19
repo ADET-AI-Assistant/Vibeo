@@ -12,9 +12,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import StatusCard from '../components/StatusCard';
 import MovieRow from '../components/MovieRow';
+import MovieLogo from '../components/MovieLogo';
 import { MOOD_MOVIES } from '../data/moodData';
 
-const TMDB_API_KEY = '05a3f3071ad3fa222ab689fb62ed0df1';
+const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 const TMDB_IMG_BASE = 'https://image.tmdb.org/t/p/w500';
 const TMDB_BD_BASE = 'https://image.tmdb.org/t/p/original';
 
@@ -190,7 +191,13 @@ const Watch = () => {
                     {/* ── Movie title row ── */}
                     {movieMeta && (
                         <div className="watch-title-row">
-                            <h1 className="watch-title">{movieMeta.title}</h1>
+                            <h1 className="watch-title">
+                                <MovieLogo
+                                    tmdbId={movieMeta.id || id}
+                                    title={movieMeta.title}
+                                    maxHeight="80px"
+                                />
+                            </h1>
                             <div className="watch-meta">
                                 {movieMeta.release_date && (
                                     <span>{movieMeta.release_date.substring(0, 4)}</span>
