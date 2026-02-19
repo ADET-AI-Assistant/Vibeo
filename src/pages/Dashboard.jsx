@@ -11,19 +11,21 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // ── Reusable components ──────────────────────────────────────
-import Header from '../components/Header';
-import HeroBanner from '../components/HeroBanner';
-import MovieRow from '../components/MovieRow';
+// ── Reusable components ──────────────────────────────────────
+import Header from '@/components/layout/Header';
+import HeroBanner from '@/components/layout/HeroBanner';
+import MovieRow from '@/components/layout/MovieRow';
+import Footer from '@/components/layout/Footer';
 
 // ── Data sources ──────────────────────────────────────────────
-import useTMDB from '../hooks/useTMDB';
-import { MOOD_MOVIES } from '../data/moodData';
+import { useMovies } from '@/hooks/useMovies';
+import { MOOD_MOVIES } from '@/data/moodData';
 
 const Dashboard = () => {
     const navigate = useNavigate();
 
     // Live TMDB trending data
-    const { movies: trending, loading } = useTMDB();
+    const { movies: trending, loading } = useMovies();
 
     // Derived slices for different sections
     const topRated = [...trending].sort((a, b) => b.vote_average - a.vote_average).slice(0, 12);
@@ -86,13 +88,7 @@ const Dashboard = () => {
                 </div>
             </main>
 
-            <footer className="site-footer">
-                <div className="site-footer__inner">
-                    <span className="site-footer__logo">VibeReel</span>
-                    <p>Powered by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> &amp; <a href="https://videasy.net/" target="_blank" rel="noopener">Videasy</a></p>
-                    <p>© 2026 VibeReel</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 };
