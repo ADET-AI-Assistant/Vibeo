@@ -13,6 +13,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import StatusCard from '../components/StatusCard';
 import MovieRow from '../components/MovieRow';
+import Footer from '../components/Footer';
 import { MOOD_MOVIES } from '../data/moodData';
 
 const TMDB_API_KEY = '05a3f3071ad3fa222ab689fb62ed0df1';
@@ -196,13 +197,9 @@ const Watch = () => {
                 </div>
             </main>
 
-            <footer className="site-footer">
-                <div className="site-footer__inner">
-                    <span className="site-footer__logo">VibeReel</span>
-                    <p>Streaming via Videasy · Data from TMDB</p>
-                    <p>© 2026 VibeReel</p>
-                </div>
-            </footer>
+            <Footer>
+                Streaming via Videasy · Data from TMDB
+            </Footer>
         </div>
     );
 };

@@ -22,6 +22,7 @@ import Header from '../components/Header';
 import HeroBanner from '../components/HeroBanner';
 import MovieRow from '../components/MovieRow';
 import StatusCard from '../components/StatusCard';
+import Footer from "../components/Footer"
 
 // ── Data sources ──────────────────────────────────────────────
 import useTMDB from '../hooks/useTMDB';
@@ -261,13 +262,7 @@ const Dashboard = () => {
             </main>
 
             {/* ── Footer ── */}
-            <footer className="site-footer">
-                <div className="site-footer__inner">
-                    <span className="site-footer__logo">VibeReel</span>
-                    <p>Powered by <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> &amp; <a href="https://videasy.net/" target="_blank" rel="noopener">Videasy</a></p>
-                    <p>© 2026 VibeReel</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 };
