@@ -1,44 +1,200 @@
 /* ================================================================
-   SITE FOOTER
+   SITE FOOTER — Redesigned
    ================================================================ */
 .site-footer {
-    background: var(--c-surface);
+    background: var(--c-bg);
     border-top: 1px solid var(--c-border);
     margin-top: auto;
-    text-align: center;
 }
 
 .site-footer__inner {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 1.5rem;
+    padding: 2.5rem 2rem 1.5rem;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 1.75rem;
+}
+
+/* ── Top row: logo + divider + socials ── */
+.footer-top {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.footer-logo {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.footer-logo__img {
+    height: 22px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.3));
+}
+
+.footer-logo__text {
+    font-size: 1.35rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    line-height: 1;
+}
+
+.footer-logo__vibe {
+    color: var(--c-text);
+}
+
+.footer-logo__o {
+    color: var(--c-accent-lt);
+}
+
+.footer-divider {
+    width: 1px;
+    height: 22px;
+    background: var(--c-border);
+    flex-shrink: 0;
+}
+
+.footer-socials {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.footer-social-link {
+    display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.75rem;
     color: var(--c-muted);
-    flex-direction: column;
-}
-
-.site-footer__logo {
-    font-weight: 800;
-    font-size: 1rem;
-    background: linear-gradient(135deg, var(--c-accent-lt), #ec4899);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.25rem;
-}
-
-.site-footer a {
-    color: var(--c-text);
-    font-weight: 500;
     transition: color 0.2s;
 }
 
-.site-footer a:hover {
+.footer-social-link:hover {
     color: var(--c-accent-lt);
+}
+
+/* ── A-Z Browse Section ── */
+.footer-az {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.footer-az__header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.footer-az__title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--c-text);
+    letter-spacing: 0.04em;
+    margin: 0;
+}
+
+.footer-az__desc {
+    font-size: 0.8rem;
+    color: var(--c-muted);
+}
+
+.footer-az__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.footer-az__btn {
+    min-width: 34px;
+    height: 32px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-surface2);
+    border: 1px solid var(--c-border);
+    border-radius: 6px;
+    color: var(--c-muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s, border-color 0.15s;
+}
+
+.footer-az__btn:hover {
+    color: var(--c-text);
+    background: var(--c-surface3);
+    border-color: var(--c-accent-lt);
+}
+
+/* ── Footer links row ── */
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding-top: 0.5rem;
+}
+
+.footer-links a {
+    color: var(--c-text);
+    font-size: 0.85rem;
+    font-weight: 500;
     text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--c-accent-lt);
+}
+
+/* ── Disclaimer + Copyright ── */
+.footer-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+}
+
+.footer-disclaimer {
+    font-size: 0.75rem;
+    color: var(--c-muted);
+    opacity: 0.7;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.footer-copyright {
+    font-size: 0.72rem;
+    color: var(--c-muted);
+    opacity: 0.5;
+    margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .site-footer__inner {
+        padding: 2rem 1rem 1.25rem;
+    }
+
+    .footer-az__header {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .footer-az__btn {
+        min-width: 30px;
+        height: 28px;
+        font-size: 0.72rem;
+    }
+
+    .footer-links {
+        gap: 1rem;
+    }
 }
