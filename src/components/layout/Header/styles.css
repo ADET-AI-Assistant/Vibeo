@@ -106,6 +106,11 @@
     display: none;
 }
 
+/* ── Search wrapper (positions the dropdown) ── */
+.topbar__search-wrapper {
+    position: relative;
+}
+
 .topbar__search {
     display: flex;
     align-items: center;
@@ -115,6 +120,13 @@
     border-radius: var(--r-pill);
     padding: 6px 14px;
     color: var(--c-muted);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.topbar__search.dropdown-active,
+.topbar__search:focus-within {
+    border-color: var(--c-accent-lt);
+    box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.15);
 }
 
 .topbar__search input {
@@ -124,6 +136,175 @@
     color: var(--c-text);
     font-size: 0.82rem;
     width: 150px;
+}
+
+/* Clear button (×) inside the search box */
+.search-clear-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--c-muted);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 50%;
+    transition: color 0.15s, background 0.15s;
+    flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+    color: var(--c-text);
+    background: var(--c-surface3);
+}
+
+/* Spinner inside search box */
+.search-spinner {
+    animation: spin-search 0.8s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin-search {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Dropdown panel ── */
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    background: var(--c-bg2);
+    border: 1px solid var(--c-border);
+    border-radius: 14px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    z-index: 2000;
+    animation: dropdown-in 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdown-in {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.search-dropdown__list {
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.search-dropdown__item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 8px 10px;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    color: var(--c-text);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+
+.search-dropdown__item:hover {
+    background: var(--c-surface2);
+}
+
+.search-dropdown__poster {
+    width: 42px;
+    height: 58px;
+    border-radius: 6px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--c-surface3);
+}
+
+.search-dropdown__poster--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--c-muted);
+}
+
+.search-dropdown__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.search-dropdown__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--c-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.search-dropdown__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--c-muted);
+}
+
+.search-dropdown__type {
+    background: var(--c-surface3);
+    padding: 1px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--c-accent-lt);
+}
+
+/* "View All Results" footer button */
+.search-dropdown__view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 12px;
+    background: var(--c-surface);
+    border: none;
+    border-top: 1px solid var(--c-border);
+    color: var(--c-accent-lt);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.search-dropdown__view-all:hover {
+    background: var(--c-surface2);
+}
+
+/* "No results" message */
+.search-dropdown__empty {
+    padding: 20px 16px;
+    text-align: center;
+    color: var(--c-muted);
+    font-size: 0.875rem;
 }
 
 /* Fix for Chrome autocomplete turning the input white */

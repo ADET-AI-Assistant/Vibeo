@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import ThemeSelector from '@/components/common/ThemeSelector';
+import { fetchTMDB } from '@/api/tmdbClient';
+import { TMDB_IMAGE_BASE } from '@/config/constants';
 import './styles.css';
+
+const PREVIEW_COUNT = 5;
 
 const Header = () => {
     const navigate = useNavigate();
@@ -11,14 +15,93 @@ const Header = () => {
     const [search, setSearch] = useState('');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    // Search dropdown state
+    const [suggestions, setSuggestions] = useState([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [searching, setSearching] = useState(false);
+    const debounceTimer = useRef(null);
+    const wrapperRef = useRef(null);
+
     const isOnboardingPage = location.pathname === '/onboarding';
+
+    /* ── Live search (debounced) ── */
+    useEffect(() => {
+        if (!search.trim()) {
+            setSuggestions([]);
+            setDropdownOpen(false);
+            setSearching(false);
+            return;
+        }
+
+        setSearching(true);
+        clearTimeout(debounceTimer.current);
+        debounceTimer.current = setTimeout(async () => {
+            const data = await fetchTMDB('/search/multi', {
+                query: encodeURIComponent(search.trim()),
+                include_adult: false,
+                page: 1,
+            });
+
+            if (data && data.results) {
+                const filtered = data.results
+                    .filter(item => item.media_type === 'movie' || item.media_type === 'tv')
+                    .slice(0, PREVIEW_COUNT);
+                setSuggestions(filtered);
+                setDropdownOpen(true);
+            }
+            setSearching(false);
+        }, 300);
+
+        return () => clearTimeout(debounceTimer.current);
+    }, [search]);
+
+    /* ── Close dropdown when clicking outside ── */
+    useEffect(() => {
+        const handleOutsideClick = e => {
+            if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
+                setDropdownOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleOutsideClick);
+        return () => document.removeEventListener('mousedown', handleOutsideClick);
+    }, []);
+
+    /* ── Close dropdown on route change ── */
+    useEffect(() => {
+        setDropdownOpen(false);
+        setSearch('');
+    }, [location.pathname, location.search]);
 
     const handleSearch = (e) => {
         e.preventDefault();
         if (search.trim()) {
             navigate(`/search?q=${encodeURIComponent(search.trim())}`);
-            setIsMobileMenuOpen(false); // Make sure mobile menu closes on search submit
+            setDropdownOpen(false);
+            setIsMobileMenuOpen(false);
         }
+    };
+
+    const goToItem = (item) => {
+        navigate(`/watch/${item.id}`);
+        setDropdownOpen(false);
+    };
+
+    const viewAllResults = () => {
+        if (search.trim()) {
+            navigate(`/search?q=${encodeURIComponent(search.trim())}`);
+            setDropdownOpen(false);
+        }
+    };
+
+    /* ── Helper: year from date string ── */
+    const getYear = (item) => {
+        const date = item.release_date || item.first_air_date || '';
+        return date ? date.slice(0, 4) : '';
+    };
+
+    const getTypeLabel = (item) => {
+        if (item.media_type === 'tv') return 'TV';
+        return 'Movie';
     };
 
     const renderActions = (className) => (
@@ -153,23 +236,106 @@ const Header = () => {
 
                         {/* ── Right side: search + actions + toggle ── */}
                         <div className="topbar__right">
-                            {/* Search box */}
+                            {/* Search box with dropdown */}
                             {!isOnboardingPage && (
-                                <form className="topbar__search" onSubmit={handleSearch} onClick={() => document.getElementById('mobile-search-input')?.focus()}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                        <circle cx="11" cy="11" r="8" />
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                                    </svg>
-                                    <input
-                                        id="mobile-search-input"
-                                        type="text"
-                                        placeholder="Search titles…"
-                                        value={search}
-                                        onChange={e => setSearch(e.target.value)}
-                                        aria-label="Search movies"
-                                    />
-                                </form>
+                                <div className="topbar__search-wrapper" ref={wrapperRef}>
+                                    <form
+                                        className={`topbar__search ${dropdownOpen ? 'dropdown-active' : ''}`}
+                                        onSubmit={handleSearch}
+                                    >
+                                        {/* Search icon / spinner */}
+                                        {searching ? (
+                                            <svg className="search-spinner" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" strokeLinecap="round" />
+                                            </svg>
+                                        ) : (
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                                <circle cx="11" cy="11" r="8" />
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                            </svg>
+                                        )}
+                                        <input
+                                            id="mobile-search-input"
+                                            type="text"
+                                            placeholder="Search titles…"
+                                            value={search}
+                                            onChange={e => setSearch(e.target.value)}
+                                            onFocus={() => search.trim() && suggestions.length > 0 && setDropdownOpen(true)}
+                                            aria-label="Search movies"
+                                            autoComplete="off"
+                                        />
+                                        {search && (
+                                            <button
+                                                type="button"
+                                                className="search-clear-btn"
+                                                onClick={() => { setSearch(''); setSuggestions([]); setDropdownOpen(false); }}
+                                                aria-label="Clear search"
+                                            >
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                                </svg>
+                                            </button>
+                                        )}
+                                    </form>
+
+                                    {/* ── Dropdown ── */}
+                                    {dropdownOpen && (
+                                        <div className="search-dropdown">
+                                            {suggestions.length === 0 && !searching ? (
+                                                <div className="search-dropdown__empty">No results found</div>
+                                            ) : (
+                                                <>
+                                                    <ul className="search-dropdown__list">
+                                                        {suggestions.map(item => (
+                                                            <li key={item.id}>
+                                                                <button
+                                                                    className="search-dropdown__item"
+                                                                    onClick={() => goToItem(item)}
+                                                                    type="button"
+                                                                >
+                                                                    {item.poster_path ? (
+                                                                        <img
+                                                                            src={`${TMDB_IMAGE_BASE}${item.poster_path}`}
+                                                                            alt={item.title || item.name}
+                                                                            className="search-dropdown__poster"
+                                                                        />
+                                                                    ) : (
+                                                                        <div className="search-dropdown__poster search-dropdown__poster--placeholder">
+                                                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                                                <rect x="2" y="3" width="20" height="14" rx="2" />
+                                                                                <polyline points="8 21 12 17 16 21" />
+                                                                                <line x1="12" y1="17" x2="12" y2="21" />
+                                                                            </svg>
+                                                                        </div>
+                                                                    )}
+                                                                    <div className="search-dropdown__info">
+                                                                        <span className="search-dropdown__title">{item.title || item.name}</span>
+                                                                        <span className="search-dropdown__meta">
+                                                                            {getYear(item) && <span>{getYear(item)}</span>}
+                                                                            <span className="search-dropdown__type">{getTypeLabel(item)}</span>
+                                                                        </span>
+                                                                    </div>
+                                                                </button>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <button
+                                                        className="search-dropdown__view-all"
+                                                        onClick={viewAllResults}
+                                                        type="button"
+                                                    >
+                                                        View All Results
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                            <polyline points="9 18 15 12 9 6" />
+                                                        </svg>
+                                                    </button>
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
                             )}
 
                             {/* Desktop Actions (Theme & Auth) */}

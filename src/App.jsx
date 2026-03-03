@@ -22,6 +22,7 @@ import Profile from '@/pages/Profile';
 import Browse from '@/pages/Browse';
 import Search from '@/pages/Search';
 import Onboarding from '@/pages/Onboarding';
+import AZList from '@/pages/AZList';
 
 const App = () => {
   const { currentUser, isOnboarded } = useAuth();
@@ -53,6 +54,7 @@ const App = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/browse/:categoryId" element={<Browse />} />
       <Route path="/search" element={<Search />} />
+      <Route path="/az-list" element={<AZList />} />
       <Route path="/watch/:id" element={<Watch />} />
 
       {/* Play page – dedicated player */}
