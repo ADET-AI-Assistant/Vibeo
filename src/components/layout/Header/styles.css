@@ -389,6 +389,7 @@
 .dropdown-header {
     padding: 16px 20px;
     border-bottom: 1px solid var(--c-border);
+    overflow: hidden;
 }
 
 .dropdown-name {
@@ -396,11 +397,19 @@
     font-size: 1.1rem;
     color: var(--c-accent-lt);
     margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .dropdown-email {
     font-size: 0.85rem;
     color: var(--c-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .dropdown-menu {
