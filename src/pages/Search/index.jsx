@@ -107,7 +107,7 @@ const Search = () => {
                 <div className={`search-card-wrap ${isGemini ? 'gemini-card-wrap' : ''}`} key={`search-${isGemini ? 'gemini' : 'tmdb'}-${item.id}-${index}`}>
                     <MovieCard
                         movie={item}
-                        onClick={(m) => navigate(`/watch/${m.id}`)}
+                        onClick={(m) => navigate(`/watch/${m.id}?type=${m.media_type || 'movie'}`)}
                         animationDelay={`${(index % 20) * 30}ms`}
                     />
                     {isGemini && (

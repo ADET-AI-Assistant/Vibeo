@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import useFanartLogo from '../../../hooks/useFanartLogo.js';
 import './styles.css';
 
-const MovieLogo = ({ tmdbId, title, className = '', maxHeight = '90px', style = {} }) => {
-    const { logoUrl, loading } = useFanartLogo(tmdbId);
+const MovieLogo = ({ tmdbId, title, type = 'movie', className = '', maxHeight = '90px', style = {} }) => {
+    const { logoUrl, loading } = useFanartLogo(tmdbId, type);
     const [imgError, setImgError] = useState(false);
 
     // Show text title while loading, if no logo found, or if image fails

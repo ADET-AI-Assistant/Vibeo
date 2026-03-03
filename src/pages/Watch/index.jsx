@@ -6,8 +6,8 @@
  * ═══════════════════════════════════════════════════════════════
  */
 
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 import Header from '@/components/layout/Header';
 import MovieRow from '@/components/layout/MovieRow';
@@ -22,17 +22,20 @@ import './styles.css';
 const Watch = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+    const type = searchParams.get('type') || 'movie';
 
     /* ── State ── */
-    const { movie: movieMeta, similar, loading } = useMovieDetail(id);
+    const { movie: movieMeta, similar, loading } = useMovieDetail(id, type);
     const { isWatchlisted, toggleWatchlist } = useUserMovies();
 
     const inWatchlist = movieMeta ? isWatchlisted(movieMeta.id) : false;
 
     /* ── Derived data ── */
+    const displayTitle = movieMeta?.title || movieMeta?.name;
+    const releaseDate = movieMeta?.release_date || movieMeta?.first_air_date;
     const backdropUrl = movieMeta?.backdrop_path ? `${TMDB_BACKDROP_BASE}${movieMeta.backdrop_path}` : null;
     const posterUrl = movieMeta?.poster_path ? `${TMDB_IMAGE_BASE}${movieMeta.poster_path}` : null;
-    const year = movieMeta?.release_date?.substring(0, 4);
     const rating = movieMeta?.vote_average ? Number(movieMeta.vote_average).toFixed(1) : null;
     const certification = movieMeta?.adult ? 'R' : 'PG-13';
 
@@ -59,7 +62,7 @@ const Watch = () => {
                             <div className="detail-hero__poster">
                                 <img
                                     src={posterUrl}
-                                    alt={movieMeta?.title || 'Movie poster'}
+                                    alt={displayTitle || 'Movie poster'}
                                 />
                             </div>
                         )}
@@ -70,14 +73,15 @@ const Watch = () => {
                                 <h1 className="detail-hero__title watch-title">
                                     <MovieLogo
                                         tmdbId={movieMeta.id || id}
-                                        title={movieMeta.title}
+                                        title={displayTitle}
                                         maxHeight="60px"
+                                        type={type}
                                     />
                                 </h1>
 
                                 {/* Meta row: year · rating · cert · HD */}
                                 <div className="detail-hero__meta">
-                                    {movieMeta.release_date && <span>{movieMeta.release_date}</span>}
+                                    {releaseDate && <span>{releaseDate}</span>}
                                     {rating && <span>{rating}</span>}
                                     <span className="detail-cert-badge">{certification}</span>
                                     <span className="detail-hd-badge">HD</span>

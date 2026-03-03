@@ -19,12 +19,12 @@ const FANART_API_KEY = import.meta.env.VITE_FANART_API_KEY;
 
 // In dev, Vite proxies /fanart-api → webservice.fanart.tv/v3 (bypasses CORS)
 // In production, you'd need your own proxy or a serverless function
-const FANART_BASE = '/fanart-api/movies';
+const FANART_BASE = '/fanart-api';
 
 // ── In-memory cache so we never fetch the same movie twice ──
 const logoCache = {};
 
-const useFanartLogo = (tmdbId) => {
+const useFanartLogo = (tmdbId, type = 'movie') => {
     const [logoUrl, setLogoUrl] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -34,9 +34,11 @@ const useFanartLogo = (tmdbId) => {
             return;
         }
 
+        const cacheKey = `${type}_${tmdbId}`;
+
         // Check cache first
-        if (logoCache[tmdbId] !== undefined) {
-            setLogoUrl(logoCache[tmdbId]);
+        if (logoCache[cacheKey] !== undefined) {
+            setLogoUrl(logoCache[cacheKey]);
             setLoading(false);
             return;
         }
@@ -46,8 +48,9 @@ const useFanartLogo = (tmdbId) => {
         const fetchLogo = async () => {
             setLoading(true);
             try {
+                const endpoint = type === 'tv' ? 'tv' : 'movies';
                 const res = await fetch(
-                    `${FANART_BASE}/${tmdbId}?api_key=${FANART_API_KEY}`
+                    `${FANART_BASE}/${endpoint}/${tmdbId}?api_key=${FANART_API_KEY}`
                 );
 
                 if (!res.ok) throw new Error(`fanart.tv ${res.status}`);
@@ -55,7 +58,6 @@ const useFanartLogo = (tmdbId) => {
                 const data = await res.json();
 
                 // ── Pick the best logo ──
-                // Priority: hdmovielogo (EN, most liked) → movielogo (EN, most liked)
                 let logo = null;
 
                 const pickBest = (arr) => {
@@ -68,18 +70,18 @@ const useFanartLogo = (tmdbId) => {
                     return pool[0]?.url || null;
                 };
 
-                logo = pickBest(data.hdmovielogo);
-                if (!logo) logo = pickBest(data.movielogo);
+                logo = pickBest(data.hdmovielogo) || pickBest(data.hdtvlogo);
+                if (!logo) logo = pickBest(data.movielogo) || pickBest(data.clearlogo);
 
                 // Cache the result (even null, to avoid retrying)
-                logoCache[tmdbId] = logo;
+                logoCache[cacheKey] = logo;
 
                 if (!cancelled) {
                     setLogoUrl(logo);
                 }
             } catch (err) {
                 // Cache null on error to prevent hammering the API
-                logoCache[tmdbId] = null;
+                logoCache[cacheKey] = null;
                 if (!cancelled) {
                     setLogoUrl(null);
                 }
@@ -91,7 +93,7 @@ const useFanartLogo = (tmdbId) => {
         fetchLogo();
 
         return () => { cancelled = true; };
-    }, [tmdbId]);
+    }, [tmdbId, type]);
 
     return { logoUrl, loading };
 };

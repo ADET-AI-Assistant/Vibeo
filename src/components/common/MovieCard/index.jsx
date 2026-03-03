@@ -10,13 +10,16 @@ const MovieCard = ({ movie, onClick, animationDelay = '0ms', showMatchBadge = fa
 
     if (!movie) return null;
 
-    const { title, poster_path, release_date, vote_average, matchPercentage } = movie;
+    // TMDB uses 'name' and 'first_air_date' for TV shows, 'title' and 'release_date' for movies
+    const displayTitle = movie.title || movie.name;
+    const displayDate = movie.release_date || movie.first_air_date;
+    const { poster_path, vote_average, matchPercentage } = movie;
 
     const posterSrc = (!imgError && poster_path)
         ? `${TMDB_IMG_BASE}${poster_path}`
         : FALLBACK_IMG;
 
-    const year = release_date ? release_date.substring(0, 4) : '';
+    const year = displayDate ? displayDate.substring(0, 4) : '';
 
     // Rating colour: green ≥7, yellow ≥5, red <5
     const ratingColor = vote_average >= 7
@@ -34,14 +37,14 @@ const MovieCard = ({ movie, onClick, animationDelay = '0ms', showMatchBadge = fa
             onMouseLeave={() => setHovered(false)}
             role="button"
             tabIndex={0}
-            aria-label={`Watch ${title}`}
+            aria-label={`Watch ${displayTitle}`}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClick && onClick(movie); }}
         >
             {/* ── Poster ── */}
             <div className="mc__poster-wrap">
                 <img
                     src={posterSrc}
-                    alt={`${title} poster`}
+                    alt={`${displayTitle} poster`}
                     className="mc__poster"
                     onError={() => setImgError(true)}
                     loading="lazy"
@@ -73,7 +76,7 @@ const MovieCard = ({ movie, onClick, animationDelay = '0ms', showMatchBadge = fa
 
             {/* ── Card footer info ── */}
             <div className="mc__info">
-                <p className="mc__title">{title}</p>
+                <p className="mc__title">{displayTitle}</p>
                 {year && <span className="mc__year">{year}</span>}
             </div>
         </article>
