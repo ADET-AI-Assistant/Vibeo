@@ -94,15 +94,25 @@
 }
 
 .detail-hero__title .movie-logo-img {
-    max-height: 60px;
+    max-height: 100px;
     width: auto;
     max-width: 100%;
     filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.5));
 }
 
+.detail-hero__title .movie-logo-text {
+    font-size: clamp(2.6rem, 5vw, 4.4rem);
+    line-height: 0.95;
+    display: inline-block;
+}
+
 @media (max-width: 768px) {
     .detail-hero__title .movie-logo-img {
-        max-height: 50px;
+        max-height: 72px;
+    }
+
+    .detail-hero__title .movie-logo-text {
+        font-size: clamp(1.9rem, 9vw, 2.8rem);
     }
 }
 
