@@ -1,7 +1,4 @@
-# Vibeo — AI Movie Mood-Matching & Streaming
-
-![Vibeo Banner](/public/vibeo.png) 
-<!-- Replace with an actual hero banner if available -->
+# Vibeo: AI Movie Mood-Matching & Streaming
 
 **Vibeo** is a next-generation personal movie streaming and AI-powered mood-matching recommendation platform. Designed with a premium aesthetic and powered by advanced content-based filtering along with Google's Gemini AI, Vibeo intuitively helps you discover what to watch based precisely on your current mood. 
 
