@@ -132,3 +132,13 @@
         transform: scale(1);
     }
 }
+
+@media (max-width: 850px) {
+    .theme-dropdown {
+        right: auto;
+        left: 0;
+        top: auto;
+        bottom: 120%;
+        transform-origin: bottom left;
+    }
+}
