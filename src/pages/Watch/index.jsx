@@ -103,7 +103,7 @@ const Watch = () => {
 
                                 {/* Actions */}
                                 <div className="detail-actions">
-                                    <button className="detail-play-btn" onClick={() => navigate(`/play/${id}`)}>
+                                    <button className="detail-play-btn" onClick={() => navigate(`/play/${id}?type=${type}`)}>
                                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                             <polygon points="5 3 19 12 5 21 5 3" />
                                         </svg>
@@ -145,7 +145,7 @@ const Watch = () => {
                         <MovieRow
                             title="More Like This"
                             movies={similar}
-                            onCardClick={(m) => navigate(`/watch/${m.id}`)}
+                            onCardClick={(m) => navigate(`/watch/${m.id}?type=${m.media_type || type}`)}
                         />
                     )}
                 </div>

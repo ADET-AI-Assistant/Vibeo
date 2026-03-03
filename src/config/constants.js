@@ -4,5 +4,11 @@ export const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
 export const TMDB_BACKDROP_BASE = 'https://image.tmdb.org/t/p/original';
 
 export const STREAM_PROVIDERS = [
-    { key: 'videasy', label: 'Videasy', url: (id) => `https://player.videasy.net/movie/${id}` }
+    {
+        key: 'videasy',
+        label: 'Videasy',
+        movieUrl: (id) => `https://player.videasy.net/movie/${id}`,
+        tvUrl: (id, season, episode) => `https://player.videasy.net/tv/${id}/${season}/${episode}`,
+    }
 ];
+
