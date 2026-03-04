@@ -1,0 +1,48 @@
+/* Nebula Theme (Animated) */
+[data-theme="nebula"] {
+    --c-bg: #050505;
+    --c-bg2: #0a0510;
+    --c-surface: #1e1329;
+    --c-surface2: #241731;
+    --c-surface3: #2a1b3d;
+
+    --c-border: rgba(168, 85, 247, 0.15);
+    --c-border2: rgba(168, 85, 247, 0.3);
+
+    --c-accent: #a855f7;
+    --c-accent-lt: #c084fc;
+    --c-accent-glow: rgba(168, 85, 247, 0.4);
+
+    --c-text: #f3e8ff;
+    --c-text2: #a78bfa;
+
+    background-image:
+        radial-gradient(white, rgba(255, 255, 255, .2) 2px, transparent 3px),
+        radial-gradient(white, rgba(255, 255, 255, .15) 1px, transparent 2px),
+        radial-gradient(white, rgba(255, 255, 255, .1) 2px, transparent 3px),
+        radial-gradient(circle at 50% 50%, #1e1329 0%, #0f0b14 100%);
+    background-size: 550px 550px, 350px 350px, 250px 250px, 100% 100%;
+    background-position: 0 0, 40px 60px, 130px 270px, 0 0;
+    animation: star-move 60s linear infinite, nebula-pulse 10s ease-in-out infinite alternate;
+    background-attachment: fixed;
+}
+
+@keyframes star-move {
+    from {
+        background-position: 0 0, 40px 60px, 130px 270px;
+    }
+
+    to {
+        background-position: 550px 550px, 390px 410px, 380px 520px;
+    }
+}
+
+@keyframes nebula-pulse {
+    0% {
+        background-color: #140c1c;
+    }
+
+    100% {
+        background-color: #1e1329;
+    }
+}
