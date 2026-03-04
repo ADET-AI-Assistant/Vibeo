@@ -153,6 +153,38 @@ export const useUserMovies = () => {
         }
     };
 
+    /**
+     * Wipes the entire 'continueWatching' history array for the current user.
+     */
+    const clearWatchHistory = async () => {
+        if (!currentUser) return false;
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await updateDoc(userRef, { continueWatching: [] });
+            setContinueWatching([]);
+            return true;
+        } catch (error) {
+            console.error("Error clearing watch history:", error);
+            return false;
+        }
+    };
+
+    /**
+     * Wipes the entire 'watchlist' array for the current user.
+     */
+    const clearWatchlist = async () => {
+        if (!currentUser) return false;
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await updateDoc(userRef, { watchlist: [] });
+            setWatchlist([]);
+            return true;
+        } catch (error) {
+            console.error("Error clearing watchlist:", error);
+            return false;
+        }
+    };
+
     return {
         watchlist,
         continueWatching,
@@ -161,6 +193,8 @@ export const useUserMovies = () => {
         isWatchlisted,
         toggleWatchlist,
         addToContinueWatching,
-        addWatchTime
+        addWatchTime,
+        clearWatchHistory,
+        clearWatchlist
     };
 };

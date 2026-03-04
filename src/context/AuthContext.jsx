@@ -47,6 +47,31 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Add single movie to favorites
+    const addToFavorites = async (movie) => {
+        if (!currentUser) {
+            alert("Please sign in to save movies to your Watchlist!");
+            return;
+        }
+
+        // Prevent duplicates
+        if (favoriteMovies.find(m => m.id === movie.id)) {
+            return;
+        }
+
+        const newFavorites = [...favoriteMovies, movie];
+        setFavoriteMovies(newFavorites);
+
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            await setDoc(userRef, { favoriteMovies: newFavorites }, { merge: true });
+        } catch (error) {
+            console.error("Error adding to favorites:", error);
+            // Revert state on failure
+            setFavoriteMovies(favoriteMovies);
+        }
+    };
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -83,7 +108,8 @@ export const AuthProvider = ({ children }) => {
         favoriteMovies,
         loginWithGoogle,
         logout,
-        saveOnboardingData
+        saveOnboardingData,
+        addToFavorites
     }), [currentUser, isOnboarded, favoriteMovies]);
 
     return (
