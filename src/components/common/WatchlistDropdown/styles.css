@@ -1,0 +1,126 @@
+.watchlist-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.watchlist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.watchlist-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.watchlist-btn.active {
+    background: rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.5);
+    color: #e2e8f0;
+}
+
+.watchlist-btn.active:hover {
+    background: rgba(168, 85, 247, 0.25);
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.chevron {
+    transition: transform 0.2s;
+    opacity: 0.7;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.watchlist-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 200px;
+    background: var(--c-surface, #1e1e2e);
+    border: 1px solid var(--c-border, rgba(255, 255, 255, 0.1));
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    overflow: hidden;
+    animation: dropdownFadeIn 0.2s ease forwards;
+}
+
+@keyframes dropdownFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.menu-group {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 0;
+}
+
+.menu-group.border-top {
+    border-top: 1px solid var(--c-border, rgba(255, 255, 255, 0.1));
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: transparent;
+    border: none;
+    color: var(--c-text, #e2e8f0);
+    padding: 10px 16px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 100%;
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.menu-item.selected {
+    color: var(--c-accent, #a855f7);
+    background: rgba(168, 85, 247, 0.08);
+}
+
+.menu-item-icon {
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.menu-item.remove {
+    color: #ef4444;
+    /* red-500 */
+}
+
+.menu-item.remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
