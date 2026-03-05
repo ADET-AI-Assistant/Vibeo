@@ -138,9 +138,16 @@
 
 @media (max-width: 480px) {
 
-    /* Even smaller screens, logo text can be hidden to save space */
+    /* Smaller screens: keep logo but slightly smaller if needed, don't hide it */
     .topbar__logo-text {
-        display: none;
+        font-size: 1.1rem;
+    }
+
+    .topbar__search-icon-label {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .topbar__search input {
