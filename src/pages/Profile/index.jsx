@@ -10,7 +10,7 @@ import VibeStats from '@/components/common/VibeStats';
 import './styles.css';
 
 const Profile = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, favoriteMovies } = useAuth();
     const { watchlist, continueWatching, totalWatchTime, removeFromContinueWatching, updateWatchlistStatus, removeFromWatchlist } = useUserMovies();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('all');
