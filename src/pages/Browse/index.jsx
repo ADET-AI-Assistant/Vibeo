@@ -2,6 +2,9 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '@/components/layout/Header';
 import MovieCard from '@/components/common/MovieCard';
+import StarRating from '@/components/common/StarRating';
+import TrailerModal from '@/components/common/TrailerModal';
+import WatchlistDropdown from '@/components/common/WatchlistDropdown';
 import { useBrowseMovies, SORT_OPTIONS, GENRE_MAP } from '@/hooks/useBrowseMovies';
 import { fetchTMDB } from '@/api/tmdbClient';
 import { TMDB_BACKDROP_BASE, TMDB_IMAGE_BASE } from '@/config/constants';
@@ -58,7 +61,7 @@ const Browse = () => {
     const { categoryId } = useParams();
     const navigate = useNavigate();
 
-    // ── Filter state ──────────────────────────────────────────
+    // ── Filter & Modal state ──────────────────────────────────
     const mapCategoryToSort = (cat) => {
         const map = {
             trending: 'trending',
@@ -75,6 +78,7 @@ const Browse = () => {
     const [genreId, setGenreId] = useState('');
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [movieDetails, setMovieDetails] = useState(null);
+    const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
     // Sync sort from category param
     useEffect(() => {
@@ -101,12 +105,21 @@ const Browse = () => {
         if (node) observerRef.current.observe(node);
     }, [loading, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
-    // Auto-select first movie when results change
+    const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1100);
+
+    // Track window width to differentiate mobile/desktop auto-select behavior
     useEffect(() => {
-        if (movies.length > 0 && !selectedMovie) {
+        const handleResize = () => setIsDesktop(window.innerWidth > 1100);
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Auto-select first movie when results change (Desktop ONLY)
+    useEffect(() => {
+        if (isDesktop && movies.length > 0 && !selectedMovie) {
             setSelectedMovie(movies[0]);
         }
-    }, [movies]);
+    }, [movies, isDesktop, selectedMovie]);
 
     // Fetch detail panel data when selected movie changes
     useEffect(() => {
@@ -119,14 +132,27 @@ const Browse = () => {
 
         const fetchDetails = async () => {
             try {
-                const [details, credits] = await Promise.all([
+                // Fetch details, cast/crew, and videos simultaneously
+                const [details, credits, videosRes] = await Promise.all([
                     fetchTMDB(`/movie/${selectedMovie.id}`),
                     fetchTMDB(`/movie/${selectedMovie.id}/credits`),
+                    fetchTMDB(`/movie/${selectedMovie.id}/videos`),
                 ]);
+
                 if (isMounted) {
+                    // Extract director
+                    const director = credits?.crew?.find(member => member.job === 'Director');
+
+                    // Extract official YouTube trailer
+                    const trailer = videosRes?.results?.find(
+                        vid => vid.site === 'YouTube' && vid.type === 'Trailer'
+                    );
+
                     setMovieDetails({
                         ...details,
                         cast: (credits?.cast || []).slice(0, 5),
+                        director: director?.name || null,
+                        trailerKey: trailer?.key || null,
                     });
                 }
             } catch (err) {
@@ -225,6 +251,13 @@ const Browse = () => {
                     {/* ── Right: Detail Panel ── */}
                     {d && (
                         <aside className="browse-detail-panel">
+                            {/* Mobile Close Button */}
+                            <button className="detail-close-btn" onClick={() => setSelectedMovie(null)} aria-label="Close details">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+
                             <div className="detail-card">
                                 {backdropUrl && (
                                     <div className="detail-backdrop">
@@ -244,15 +277,21 @@ const Browse = () => {
                                             <span className="detail-runtime">{movieDetails.runtime} min</span>
                                         )}
                                         {d.vote_average > 0 && (
-                                            <span className="detail-rating">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="#f59e0b"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" /></svg>
-                                                {Number(d.vote_average).toFixed(1)}
-                                            </span>
+                                            <StarRating rating={d.vote_average} />
                                         )}
                                     </div>
 
                                     {d.overview && (
                                         <p className="detail-overview">{d.overview}</p>
+                                    )}
+
+                                    {movieDetails?.director && (
+                                        <div className="detail-section">
+                                            <span className="detail-label">DIRECTOR</span>
+                                            <div className="detail-chips">
+                                                <span className="detail-chip director-chip">{movieDetails.director}</span>
+                                            </div>
+                                        </div>
                                     )}
 
                                     {movieDetails?.genres && movieDetails.genres.length > 0 && (
@@ -277,7 +316,7 @@ const Browse = () => {
                                         </div>
                                     )}
 
-                                    <div className="detail-actions">
+                                    <div className="detail-actions" style={{ flexWrap: 'wrap' }}>
                                         <button
                                             className="detail-btn-watch"
                                             onClick={() => navigate(`/watch/${d.id}`)}
@@ -285,6 +324,19 @@ const Browse = () => {
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21" /></svg>
                                             Watch Now
                                         </button>
+
+                                        {movieDetails?.trailerKey && (
+                                            <button
+                                                className="detail-btn-trailer"
+                                                onClick={() => setIsTrailerOpen(true)}
+                                            >
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                                                Trailer
+                                            </button>
+                                        )}
+                                        <div style={{ width: '100%' }}>
+                                            <WatchlistDropdown movie={d} customClass="browse-watchlist-dropdown" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -292,6 +344,12 @@ const Browse = () => {
                     )}
                 </div>
             </main>
+
+            <TrailerModal
+                isOpen={isTrailerOpen}
+                videoId={movieDetails?.trailerKey}
+                onClose={() => setIsTrailerOpen(false)}
+            />
         </div>
     );
 };
