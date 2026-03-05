@@ -41,21 +41,31 @@ export const useUserMovies = () => {
         fetchUserData();
     }, [currentUser]);
 
-    const addToWatchlist = async (movie) => {
+    const addToWatchlist = async (movie, status = 'planning') => {
         if (!currentUser) return false;
         try {
             const userRef = doc(db, 'users', currentUser.uid);
+            const movieWithStatus = {
+                ...movie,
+                status,
+                genre_ids: movie.genre_ids || []
+            };
             await updateDoc(userRef, {
-                watchlist: arrayUnion(movie)
+                watchlist: arrayUnion(movieWithStatus)
             });
-            setWatchlist(prev => [...prev.filter(m => m.id !== movie.id), movie]);
+            setWatchlist(prev => [...prev.filter(m => m.id !== movie.id), movieWithStatus]);
             return true;
         } catch (error) {
             // Document might not exist with these fields yet, try setDoc with merge
             try {
                 const userRef = doc(db, 'users', currentUser.uid);
-                await setDoc(userRef, { watchlist: arrayUnion(movie) }, { merge: true });
-                setWatchlist(prev => [...prev.filter(m => m.id !== movie.id), movie]);
+                const movieWithStatus = {
+                    ...movie,
+                    status,
+                    genre_ids: movie.genre_ids || []
+                };
+                await setDoc(userRef, { watchlist: arrayUnion(movieWithStatus) }, { merge: true });
+                setWatchlist(prev => [...prev.filter(m => m.id !== movie.id), movieWithStatus]);
                 return true;
             } catch (innerError) {
                 console.error("Error adding to watchlist:", innerError);
@@ -68,8 +78,12 @@ export const useUserMovies = () => {
         if (!currentUser) return false;
         try {
             const userRef = doc(db, 'users', currentUser.uid);
+            // Need the exact object from the state to remove it from Firestore array
+            const exactMovie = watchlist.find(m => m.id === movie.id);
+            if (!exactMovie) return false;
+
             await updateDoc(userRef, {
-                watchlist: arrayRemove(movie)
+                watchlist: arrayRemove(exactMovie)
             });
             setWatchlist(prev => prev.filter(m => m.id !== movie.id));
             return true;
@@ -83,27 +97,70 @@ export const useUserMovies = () => {
         return watchlist.some(m => m.id === Number(movieId));
     };
 
+    const getWatchlistStatus = (movieId) => {
+        const movie = watchlist.find(m => m.id === Number(movieId));
+        return movie ? movie.status : null;
+    };
+
+    const updateWatchlistStatus = async (movie, newStatus) => {
+        if (!currentUser) return false;
+
+        const simpleMovie = {
+            id: movie.id,
+            title: movie.title || movie.name,
+            poster_path: movie.poster_path,
+            vote_average: movie.vote_average,
+            release_date: movie.release_date || movie.first_air_date,
+            genre_ids: movie.genre_ids || []
+        };
+
+        const existingMovie = watchlist.find(m => m.id === Number(movie.id));
+
+        if (existingMovie) {
+            // If the status is the same, do nothing
+            if (existingMovie.status === newStatus) return true;
+
+            // Remove old, add new
+            try {
+                const userRef = doc(db, 'users', currentUser.uid);
+                await updateDoc(userRef, {
+                    watchlist: arrayRemove(existingMovie)
+                });
+
+                const updatedMovie = { ...simpleMovie, status: newStatus };
+                await updateDoc(userRef, {
+                    watchlist: arrayUnion(updatedMovie)
+                });
+
+                setWatchlist(prev => [...prev.filter(m => m.id !== movie.id), updatedMovie]);
+                return true;
+            } catch (error) {
+                console.error("Error updating watchlist status:", error);
+                return false;
+            }
+        } else {
+            // Not in list yet, just add it
+            return await addToWatchlist(simpleMovie, newStatus);
+        }
+    };
+
     const toggleWatchlist = async (movie) => {
         if (!movie) return false;
 
         // simplify movie object to avoid firestore limitations
         const simpleMovie = {
             id: movie.id,
-            title: movie.title,
+            title: movie.title || movie.name,
             poster_path: movie.poster_path,
             vote_average: movie.vote_average,
-            release_date: movie.release_date
+            release_date: movie.release_date || movie.first_air_date,
+            genre_ids: movie.genre_ids || []
         };
 
         if (isWatchlisted(movie.id)) {
-            // Need to exact match the object to remove from array, so find it
-            const existing = watchlist.find(m => m.id === Number(movie.id));
-            if (existing) {
-                return await removeFromWatchlist(existing);
-            }
-            return false;
+            return await removeFromWatchlist(simpleMovie);
         } else {
-            return await addToWatchlist(simpleMovie);
+            return await addToWatchlist(simpleMovie, 'planning');
         }
     };
 
@@ -139,6 +196,20 @@ export const useUserMovies = () => {
             setContinueWatching(currentList);
         } catch (error) {
             console.error("Error adding to continue watching:", error);
+        }
+    };
+
+    const removeFromContinueWatching = async (movieId) => {
+        if (!currentUser) return false;
+        try {
+            const userRef = doc(db, 'users', currentUser.uid);
+            const newList = continueWatching.filter(m => m.id !== Number(movieId));
+            await updateDoc(userRef, { continueWatching: newList });
+            setContinueWatching(newList);
+            return true;
+        } catch (error) {
+            console.error("Error removing from continue watching:", error);
+            return false;
         }
     };
 
@@ -191,9 +262,12 @@ export const useUserMovies = () => {
         totalWatchTime,
         loading,
         isWatchlisted,
+        getWatchlistStatus,
+        updateWatchlistStatus,
         toggleWatchlist,
         addToContinueWatching,
         addWatchTime,
+        removeFromContinueWatching,
         clearWatchHistory,
         clearWatchlist
     };
