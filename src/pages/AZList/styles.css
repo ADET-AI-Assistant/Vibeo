@@ -91,38 +91,83 @@
 }
 
 /* ── Movie Grid ── */
-.azlist.az-grid {
+.azlist-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 30px), 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.25rem;
     width: 100%;
     margin-bottom: 3rem;
 }
 
 .azlist-card-wrap {
     width: 100%;
-    aspect-ratio: 2/3;
     position: relative;
+    /* Maintain aspect ratio via the MovieCard component internally or via this wrap */
 }
 
-@media (min-width: 768px) {
-    .az-grid {
-        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 30px), 1fr));
-        gap: 1.75rem;
+@media (min-width: 640px) {
+    .azlist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1.5rem;
     }
 }
 
 @media (min-width: 1024px) {
-    .az-grid {
-        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 50px), 1fr));
+    .azlist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.75rem;
     }
 }
 
 @media (min-width: 1400px) {
-    .az-grid {
-        grid-template-columns: repeat(auto-fill, minmax(calc(var(--card-min-width) + 70px), 1fr));
+    .azlist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
         gap: 2rem;
     }
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    min-width: 38px;
+    height: 38px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-surface2);
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-sm);
+    color: var(--c-text2);
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: var(--c-surface3);
+    color: var(--c-text);
+    border-color: var(--c-border2);
+}
+
+.pagination-btn.active {
+    background: var(--c-accent);
+    color: #fff;
+    border-color: var(--c-accent);
+    box-shadow: 0 4px 15px var(--c-accent-glow);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* Empty state */
@@ -147,13 +192,23 @@
         font-size: 1.4rem;
     }
 
+    .azlist-filter {
+        gap: 4px;
+    }
+
     .azlist-filter__btn {
-        min-width: 30px;
-        height: 30px;
+        min-width: 32px;
+        height: 32px;
         font-size: 0.75rem;
+        padding: 0 6px;
     }
 
     .azlist-results-heading {
         font-size: 1.1rem;
+    }
+
+    .azlist-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
     }
 }

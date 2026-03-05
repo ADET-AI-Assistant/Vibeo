@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { formatWatchTime } from '@/utils/timeUtils';
 import './styles.css';
 
-const VibeStats = ({ watchlist, totalWatchTime, isHeaderVariant = false }) => {
+const VibeStats = ({ watchlist = [], favorites = [], totalWatchTime, isHeaderVariant = false }) => {
     // 1. Define Taste Dimensions and Map Genres
     const dimensions = useMemo(() => [
         {
@@ -40,11 +40,13 @@ const VibeStats = ({ watchlist, totalWatchTime, isHeaderVariant = false }) => {
     // 2. Calculate Dimension Scores
     const stats = useMemo(() => {
         const completedMovies = watchlist.filter(m => m.status === 'completed');
-        const scores = { adrenaline: 0, heart: 0, imagination: 0, reality: 0, vibe: 0 };
+        // Merge completed movies with initial onboarding favorites for better DNA representation
+        const analyzedMovies = [...favorites, ...completedMovies];
 
+        const scores = { adrenaline: 0, heart: 0, imagination: 0, reality: 0, vibe: 0 };
         let maxCount = 0;
 
-        completedMovies.forEach(movie => {
+        analyzedMovies.forEach(movie => {
             if (movie.genre_ids) {
                 movie.genre_ids.forEach(genreId => {
                     dimensions.forEach(dim => {
@@ -59,13 +61,13 @@ const VibeStats = ({ watchlist, totalWatchTime, isHeaderVariant = false }) => {
         // Find max for scaling
         Object.values(scores).forEach(val => { if (val > maxCount) maxCount = val; });
 
-        // Normalize to 0-100 range for the chart (min 10% for visibility)
+        // Normalize to 0-100 range for the chart (min 15% for visibility)
         return dimensions.map(dim => ({
             ...dim,
             value: maxCount > 0 ? Math.max(15, (scores[dim.key] / maxCount) * 100) : 20,
             raw: scores[dim.key]
         }));
-    }, [watchlist, dimensions]);
+    }, [watchlist, favorites, dimensions]);
 
     // 3. SVG Radar Chart Points Calculation
     const size = 280;
@@ -85,8 +87,6 @@ const VibeStats = ({ watchlist, totalWatchTime, isHeaderVariant = false }) => {
     }).join(' ');
 
     const watchTimeMinutes = (totalWatchTime || 0) / 60;
-
-    if (watchlist.length === 0) return null;
 
     return (
         <div className={`vibe-stats card-glow ${isHeaderVariant ? 'vibe-stats--header' : ''}`}>

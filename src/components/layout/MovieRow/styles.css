@@ -11,12 +11,14 @@
 }
 
 .row-title {
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    /* Larger, premium title */
+    font-weight: 800;
     color: var(--c-text);
     display: flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.6rem;
+    letter-spacing: -0.01em;
 }
 
 .row-icon {
@@ -30,8 +32,9 @@
 }
 
 .row-arrow {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    /* Slightly larger */
+    height: 40px;
     border-radius: 50%;
     border: 1px solid var(--c-border2);
     background: var(--c-surface2);
@@ -39,7 +42,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    /* Hidden by default */
+    transform: translateX(10px);
+}
+
+.movie-row:hover .row-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.row-arrow--left {
+    transform: translateX(-10px);
+}
+
+.movie-row:hover .row-arrow--left {
+    transform: translateX(0);
 }
 
 .row-arrow:hover {
@@ -100,6 +119,7 @@
 
 @media (min-width: 1200px) {
     .row-card-wrap {
-        width: calc(var(--card-min-width) + 60px);
+        width: calc(var(--card-min-width) + 80px);
+        /* Slightly wider cards for fuller feel */
     }
 }

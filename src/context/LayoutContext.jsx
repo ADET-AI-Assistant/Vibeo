@@ -22,6 +22,14 @@ export const LayoutProvider = ({ children }) => {
         };
     });
 
+    const [heroSource, setHeroSource] = useState(() => {
+        return localStorage.getItem('vibeo-hero-source') || 'trending';
+    });
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-hero-source', heroSource);
+    }, [heroSource]);
+
     useEffect(() => {
         localStorage.setItem('vibeo-card-size', cardSize);
         document.body.setAttribute('data-card-size', cardSize);
@@ -39,6 +47,7 @@ export const LayoutProvider = ({ children }) => {
     const resetLayout = () => {
         setCardSize('medium');
         setGlassLevel('subtle');
+        setHeroSource('trending');
         setShowMetadata({
             rating: true,
             year: true,
@@ -54,6 +63,8 @@ export const LayoutProvider = ({ children }) => {
         setGlassLevel,
         showMetadata,
         setShowMetadata,
+        heroSource,
+        setHeroSource,
         resetLayout
     };
 

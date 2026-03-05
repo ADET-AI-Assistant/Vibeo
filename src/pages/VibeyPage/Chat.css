@@ -1,0 +1,328 @@
+/* ═══════════════════════════════════════════════════════════════
+   VibeyPage — CHAT AREA
+   ═══════════════════════════════════════════════════════════════ */
+
+.vp-messages-area {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Messages ── */
+.vp-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    max-width: 850px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.vp-msg {
+    display: flex;
+    gap: 12px;
+    animation: vp-msg-in 0.3s ease-out both;
+}
+
+@keyframes vp-msg-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vp-msg--user {
+    justify-content: flex-end;
+}
+
+.vp-msg--assistant {
+    justify-content: flex-start;
+}
+
+.vp-msg-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.vp-msg-content {
+    max-width: 78%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.vp-msg--user .vp-msg-content {
+    align-items: flex-end;
+}
+
+.vp-msg-bubble {
+    padding: 12px 18px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.vp-msg--user .vp-msg-bubble {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.vp-msg--assistant .vp-msg-bubble {
+    background: var(--c-surface2);
+    color: var(--c-text);
+    border: 1px solid var(--c-border);
+    border-bottom-left-radius: 4px;
+}
+
+/* ── Movie Recommendation Cards ── */
+.vp-movie-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.vp-movie-card {
+    display: flex;
+    gap: 14px;
+    padding: 12px;
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.vp-movie-card:hover {
+    border-color: var(--c-accent-glow);
+    background: var(--c-surface2);
+}
+
+.vp-movie-poster {
+    width: 60px;
+    height: 90px;
+    border-radius: var(--r-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--c-surface3);
+}
+
+.vp-movie-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.vp-movie-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--c-text);
+}
+
+.vp-movie-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vp-movie-rating {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--c-gold);
+}
+
+.vp-movie-year {
+    font-size: 0.75rem;
+    color: var(--c-muted);
+}
+
+.vp-movie-overview {
+    font-size: 0.75rem;
+    color: var(--c-text2);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.vp-movie-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.vp-movie-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: var(--r-sm);
+    border: none;
+    font-size: 0.72rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.vp-movie-btn--primary {
+    background: var(--c-accent);
+    color: #fff;
+}
+
+.vp-movie-btn--primary:hover {
+    background: var(--c-accent-lt);
+}
+
+.vp-movie-btn--secondary {
+    background: var(--c-surface3);
+    color: var(--c-text2);
+}
+
+.vp-movie-btn--secondary:hover {
+    background: var(--c-border2);
+    color: var(--c-text);
+}
+
+/* ── Typing Indicator ── */
+.vp-typing {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 14px 18px;
+    background: var(--c-surface2);
+    border-radius: 18px;
+    border: 1px solid var(--c-border);
+    border-bottom-left-radius: 4px;
+}
+
+.vp-typing-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--c-muted);
+    animation: vp-bounce 1.3s ease-in-out infinite;
+}
+
+.vp-typing-dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.vp-typing-dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes vp-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-7px);
+        opacity: 1;
+    }
+}
+
+/* ── Input Bar ── */
+.vp-input-bar {
+    padding: 16px 24px;
+    border-top: 1px solid var(--c-border);
+    background: var(--c-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.vp-input-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 850px;
+    background: var(--c-surface);
+    border: 1px solid var(--c-border2);
+    border-radius: var(--r-xl);
+    padding: 4px 4px 4px 20px;
+    transition: border-color 0.2s ease;
+}
+
+.vp-input-container:focus-within {
+    border-color: var(--c-accent-lt);
+}
+
+.vp-input {
+    flex: 1;
+    padding: 12px 0;
+    border: none;
+    background: transparent;
+    color: var(--c-text);
+    font-size: 0.92rem;
+    font-family: inherit;
+    outline: none;
+}
+
+.vp-input::placeholder {
+    color: var(--c-muted);
+}
+
+.vp-input:disabled {
+    opacity: 0.5;
+}
+
+.vp-send-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: var(--c-accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.vp-send-btn:hover:not(:disabled) {
+    background: var(--c-accent-lt);
+    transform: scale(1.05);
+}
+
+.vp-send-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.vp-disclaimer {
+    font-size: 0.68rem;
+    color: var(--c-muted);
+    text-align: center;
+}

@@ -222,6 +222,7 @@ const Header = () => {
                                 {[
                                     { label: 'Discover', path: '/browse/trending' },
                                     { label: 'Smart Search', path: '/smart-search' },
+                                    { label: 'Vibey', path: '/vibey' },
                                     { label: 'Taste Matcher', path: '/ai-match' },
                                 ].map(link => {
                                     const isActive = location.pathname === link.path || (link.path.startsWith('/browse') && location.pathname.startsWith('/browse'));

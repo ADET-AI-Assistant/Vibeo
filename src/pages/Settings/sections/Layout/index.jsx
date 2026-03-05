@@ -11,7 +11,8 @@ const LayoutSection = () => {
     const {
         cardSize, setCardSize,
         glassLevel, setGlassLevel,
-        showMetadata, setShowMetadata
+        showMetadata, setShowMetadata,
+        heroSource, setHeroSource
     } = useLayout();
 
     const toggleMetadata = (key) => {
@@ -148,6 +149,38 @@ const LayoutSection = () => {
                         </div>
                         <div className="toggle-switch"></div>
                     </div>
+                </div>
+            </section>
+
+            {/* Hero Carousel Source */}
+            <section className="settings-group">
+                <h3>Hero Carousel Source</h3>
+                <p>Choose which content appears in the large spotlight banner.</p>
+                <div className="hero-source-grid">
+                    {[
+                        { id: 'trending', label: 'Trending', desc: 'Current highlights', icon: <Star size={18} /> },
+                        { id: 'nowPlaying', label: 'Now Playing', desc: 'In theaters now', icon: <Calendar size={18} /> },
+                        { id: 'topRated', label: 'Top Rated', desc: 'All-time classics', icon: <Star size={18} /> },
+                        { id: 'moodMatch', label: 'Personalized', desc: 'Based on your tastes', icon: <Layers size={18} /> },
+                        { id: 'popular', label: 'Popular', desc: 'Popular worldwide', icon: <Maximize size={18} /> }
+                    ].map(source => (
+                        <div
+                            key={source.id}
+                            className={`source-item ${heroSource === source.id ? 'active' : ''}`}
+                            onClick={() => setHeroSource(source.id)}
+                        >
+                            <span className="icon">{source.icon}</span>
+                            <div className="source-info">
+                                <strong>{source.label}</strong>
+                                <span>{source.desc}</span>
+                            </div>
+                            {heroSource === source.id && (
+                                <div className="check-badge">
+                                    <Check size={12} />
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
             </section>
         </div>

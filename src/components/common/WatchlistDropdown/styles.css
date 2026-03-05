@@ -124,3 +124,45 @@
 .menu-item.remove:hover {
     background: rgba(239, 68, 68, 0.1);
 }
+
+/* ================================================================
+   COMPACT MODE
+   ================================================================ */
+.watchlist-btn-compact {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(8px);
+}
+
+.watchlist-btn-compact:hover {
+    background: rgba(168, 85, 247, 0.2);
+    border-color: rgba(168, 85, 247, 0.6);
+    transform: scale(1.1);
+}
+
+.watchlist-btn-compact.active {
+    background: rgba(168, 85, 247, 0.3);
+    border-color: rgba(168, 85, 247, 0.6);
+    color: #fff;
+}
+
+.watchlist-dropdown-menu--compact {
+    left: auto;
+    right: 0;
+    top: calc(100% + 5px);
+    transform-origin: top right;
+}
+
+.compact-icon svg {
+    width: 18px;
+    height: 18px;
+}

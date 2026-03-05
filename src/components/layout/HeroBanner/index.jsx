@@ -141,9 +141,7 @@ const HeroBanner = ({ movies = [] }) => {
 
                 {movies[activeIndex].overview && (
                     <p className="hero-overview">
-                        {movies[activeIndex].overview.length > 180
-                            ? movies[activeIndex].overview.substring(0, 180) + '…'
-                            : movies[activeIndex].overview}
+                        {movies[activeIndex].overview}
                     </p>
                 )}
 
@@ -157,6 +155,17 @@ const HeroBanner = ({ movies = [] }) => {
                         </svg>
                         Watch Now
                     </button>
+
+                    {currentTrailerKey && (
+                        <button
+                            className="hero-btn-secondary"
+                            onClick={() => setTrailerReady(true)}
+                            style={{ gap: '10px' }}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                            Trailer
+                        </button>
+                    )}
 
                     <button
                         className="hero-btn-secondary"

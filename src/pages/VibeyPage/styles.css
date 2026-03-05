@@ -1,0 +1,225 @@
+/* ═══════════════════════════════════════════════════════════════
+   VibeyPage — CORE LAYOUT & GLOBAL
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Layout ── */
+.vp-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.vp-main {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-bg);
+    overflow: hidden;
+}
+
+/* ── Empty State ── */
+.vp-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    padding: 48px 24px;
+    gap: 16px;
+}
+
+.vp-empty-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    animation: vibey-float 3s ease-in-out infinite;
+}
+
+@keyframes vibey-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.vp-empty-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+
+.vp-empty-desc {
+    font-size: 0.92rem;
+    color: var(--c-muted);
+    max-width: 480px;
+    line-height: 1.6;
+}
+
+.vp-empty-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 600px;
+    margin-top: 8px;
+}
+
+.vp-prompt-chip {
+    padding: 8px 18px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-border2);
+    background: var(--c-surface);
+    color: var(--c-text2);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.vp-prompt-chip:hover:not(:disabled) {
+    border-color: var(--c-accent-lt);
+    color: var(--c-accent-lt);
+    background: var(--c-surface2);
+}
+
+.vp-prompt-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Login Prompt ── */
+.vp-login-prompt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: calc(100vh - 60px);
+}
+
+.vp-login-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 48px;
+    border-radius: var(--r-xl);
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    max-width: 420px;
+}
+
+.vp-login-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+}
+
+.vp-login-card h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+
+.vp-login-card p {
+    font-size: 0.85rem;
+    color: var(--c-muted);
+    line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .vp-layout {
+        grid-template-columns: 1fr;
+        position: relative;
+    }
+
+    .vp-sidebar {
+        position: fixed;
+        top: 60px;
+        left: 0;
+        width: 280px;
+        height: calc(100vh - 60px);
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: none;
+    }
+
+    .vp-sidebar:not(.vp-sidebar--collapsed) {
+        transform: translateX(0);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
+    }
+
+    .vp-sidebar--collapsed {
+        transform: translateX(-100%);
+    }
+
+    .vp-sidebar-open-btn {
+        top: 70px;
+        left: 8px;
+    }
+
+    .vp-main {
+        grid-column: 1 / -1;
+    }
+
+    .vp-messages {
+        padding: 16px;
+    }
+
+    .vp-msg-content {
+        max-width: 90%;
+    }
+
+    .vp-input-bar {
+        padding: 12px 16px;
+    }
+
+    .vp-empty-title {
+        font-size: 1.2rem;
+    }
+
+    .vp-empty-desc {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .vp-sidebar {
+        width: 100%;
+    }
+
+    .vp-msg-bubble {
+        font-size: 0.85rem;
+        padding: 10px 14px;
+    }
+
+    .vp-empty-chips {
+        gap: 6px;
+    }
+
+    .vp-prompt-chip {
+        font-size: 0.75rem;
+        padding: 6px 14px;
+    }
+}

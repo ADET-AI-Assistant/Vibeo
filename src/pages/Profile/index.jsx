@@ -78,6 +78,7 @@ const Profile = () => {
                             <div className="hub-stats-column">
                                 <VibeStats
                                     watchlist={watchlist}
+                                    favorites={favoriteMovies}
                                     totalWatchTime={totalWatchTime}
                                     isHeaderVariant={true}
                                 />

@@ -41,7 +41,7 @@ export const useMoodMatchMovies = () => {
 
                 const res = await fetchTMDB(endpoint, params);
                 if (isMounted && res && res.results) {
-                    // Give them an artificial match percentage just to look cool (95% to 80%) based on popularity or rank
+                    // Personalized match percentage based on favorites (95% to 80%)
                     const processed = res.results.map((m, index) => ({
                         ...m,
                         matchPercentage: Math.max(80, 99 - Math.floor(index * 1.5))

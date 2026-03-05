@@ -1,0 +1,631 @@
+/* ═══════════════════════════════════════════════════════════════
+   VibeyChat — Styles
+   Floating AI chatbot with glassmorphism panel.
+   Uses existing CSS custom properties for full theme support.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Container ── */
+.vibey-container {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.vibey-container>* {
+    pointer-events: auto;
+}
+
+/* Ensure no overlap with scroll-to-top buttons or other overlays if any */
+@media (max-width: 768px) {
+    .vibey-fab {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .vibey-panel {
+        bottom: 80px;
+        right: 20px;
+        width: calc(100% - 40px);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FLOATING ACTION BUTTON
+   ═══════════════════════════════════════════════════════════════ */
+.vibey-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+        0 4px 20px var(--c-accent-glow),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10000;
+}
+
+.vibey-fab:hover {
+    transform: scale(1.08);
+    box-shadow:
+        0 6px 28px var(--c-accent-glow),
+        0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.vibey-fab--active {
+    transform: rotate(90deg) scale(1);
+    background: var(--c-surface2);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.vibey-fab--active:hover {
+    transform: rotate(90deg) scale(1.08);
+}
+
+.vibey-fab__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease;
+}
+
+/* Pulse ring */
+.vibey-fab__pulse {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--c-accent-lt);
+    opacity: 0;
+    animation: vibey-pulse 2.5s ease-in-out infinite;
+}
+
+.vibey-fab--active .vibey-fab__pulse {
+    animation: none;
+    opacity: 0;
+}
+
+@keyframes vibey-pulse {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.5;
+        transform: scale(1.15);
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHAT PANEL
+   ═══════════════════════════════════════════════════════════════ */
+.vibey-panel {
+    position: fixed;
+    bottom: 92px;
+    right: 24px;
+    width: 380px;
+    height: 540px;
+    border-radius: var(--r-xl);
+    background: var(--c-bg2);
+    border: 1px solid var(--c-border2);
+    backdrop-filter: var(--glass-blur);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow:
+        0 12px 48px rgba(0, 0, 0, 0.5),
+        0 0 0 1px var(--c-border);
+    z-index: 9999;
+
+    /* Hidden by default */
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.vibey-panel--open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+
+/* ── Header ── */
+.vibey-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+}
+
+.vibey-header__left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vibey-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.vibey-avatar--sm {
+    width: 32px;
+    height: 32px;
+}
+
+.vibey-header__name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--c-text);
+    letter-spacing: 0.01em;
+}
+
+.vibey-header__status {
+    font-size: 0.7rem;
+    color: var(--c-muted);
+    font-weight: 500;
+}
+
+.vibey-header__info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.vibey-header__right {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.vibey-close {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-md);
+    border: none;
+    background: transparent;
+    color: var(--c-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vibey-close:hover {
+    background: var(--c-surface2);
+    color: var(--c-text);
+}
+
+/* ── Messages Area ── */
+.vibey-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ── Welcome State ── */
+.vibey-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 32px 16px;
+    gap: 12px;
+    flex: 1;
+}
+
+.vibey-welcome__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    animation: vibey-float 3s ease-in-out infinite;
+}
+
+@keyframes vibey-float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.vibey-welcome__title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--c-text);
+}
+
+.vibey-welcome__desc {
+    font-size: 0.8rem;
+    color: var(--c-muted);
+    line-height: 1.5;
+    max-width: 280px;
+}
+
+/* ── Message Bubbles ── */
+.vibey-msg {
+    display: flex;
+    gap: 8px;
+    animation: vibey-msg-in 0.25s ease-out both;
+}
+
+@keyframes vibey-msg-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.vibey-msg--user {
+    justify-content: flex-end;
+}
+
+.vibey-msg--assistant {
+    justify-content: flex-start;
+}
+
+.vibey-msg__avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.vibey-msg__content {
+    max-width: 85%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.vibey-msg--user .vibey-msg__content {
+    align-items: flex-end;
+}
+
+.vibey-msg__bubble {
+    padding: 10px 14px;
+    border-radius: var(--r-lg);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.vibey-msg--user .vibey-msg__bubble {
+    background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.vibey-msg--assistant .vibey-msg__bubble {
+    background: var(--c-surface2);
+    color: var(--c-text);
+    border: 1px solid var(--c-border);
+    border-bottom-left-radius: 4px;
+}
+
+/* ── Movie Recommendation Cards ── */
+.vibey-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.vibey-card {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    border-radius: var(--r-md);
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.vibey-card:hover {
+    border-color: var(--c-accent-glow);
+    background: var(--c-surface2);
+}
+
+.vibey-card__poster {
+    width: 52px;
+    height: 78px;
+    border-radius: var(--r-sm);
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--c-surface3);
+}
+
+.vibey-card__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    gap: 4px;
+}
+
+.vibey-card__title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--c-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.vibey-card__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.vibey-card__rating {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--c-gold);
+}
+
+.vibey-card__year {
+    font-size: 0.7rem;
+    color: var(--c-muted);
+}
+
+.vibey-card__actions {
+    display: flex;
+    gap: 6px;
+}
+
+.vibey-card__btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--r-sm);
+    border: none;
+    font-size: 0.68rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+}
+
+.vibey-card__btn--primary {
+    background: var(--c-accent);
+    color: #fff;
+}
+
+.vibey-card__btn--primary:hover {
+    background: var(--c-accent-lt);
+}
+
+.vibey-card__btn--secondary {
+    background: var(--c-surface3);
+    color: var(--c-text2);
+}
+
+.vibey-card__btn--secondary:hover {
+    background: var(--c-border2);
+    color: var(--c-text);
+}
+
+/* ── Typing Indicator ── */
+.vibey-typing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background: var(--c-surface2);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--c-border);
+    border-bottom-left-radius: 4px;
+}
+
+.vibey-typing__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c-muted);
+    animation: vibey-bounce 1.3s ease-in-out infinite;
+}
+
+.vibey-typing__dot:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.vibey-typing__dot:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes vibey-bounce {
+
+    0%,
+    60%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    30% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
+
+/* ── Quick Prompt Chips ── */
+.vibey-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0 16px 12px;
+}
+
+.vibey-chip {
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-border2);
+    background: var(--c-surface);
+    color: var(--c-text2);
+    font-size: 0.73rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.vibey-chip:hover:not(:disabled) {
+    border-color: var(--c-accent-lt);
+    color: var(--c-accent-lt);
+    background: var(--c-surface2);
+}
+
+.vibey-chip:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Input Area ── */
+.vibey-input-area {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--c-border);
+    background: var(--c-surface);
+}
+
+.vibey-input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: var(--r-md);
+    border: 1px solid var(--c-border);
+    background: var(--c-bg);
+    color: var(--c-text);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.vibey-input::placeholder {
+    color: var(--c-muted);
+}
+
+.vibey-input:focus {
+    border-color: var(--c-accent-lt);
+}
+
+.vibey-input:disabled {
+    opacity: 0.5;
+}
+
+.vibey-send {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-md);
+    border: none;
+    background: var(--c-accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.vibey-send:hover:not(:disabled) {
+    background: var(--c-accent-lt);
+    transform: scale(1.05);
+}
+
+.vibey-send:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — Full-screen on mobile
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+    .vibey-panel {
+        bottom: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        transform: translateY(100%);
+    }
+
+    .vibey-panel--open {
+        transform: translateY(0);
+    }
+
+    .vibey-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 420px) {
+    .vibey-chips {
+        gap: 5px;
+        padding: 0 12px 10px;
+    }
+
+    .vibey-chip {
+        font-size: 0.68rem;
+        padding: 5px 10px;
+    }
+}

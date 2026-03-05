@@ -218,3 +218,73 @@
     color: var(--c-text);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
+
+/* Hero Source Selection */
+.hero-source-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.source-item {
+    background: var(--c-surface);
+    border: 1px solid var(--c-surface3);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.source-item:hover {
+    background: var(--c-surface2);
+    border-color: var(--c-text2);
+}
+
+.source-item.active {
+    background: var(--c-accent-glow);
+    border-color: var(--c-accent);
+}
+
+.source-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.source-info strong {
+    font-size: 0.85rem;
+    color: var(--c-text);
+}
+
+.source-info span {
+    font-size: 0.7rem;
+    color: var(--c-text2);
+}
+
+.source-item .check-badge {
+    top: -5px;
+    right: -5px;
+    width: 18px;
+    height: 18px;
+    transform: scale(0.85);
+    /* Slightly smaller check */
+}
+
+.source-item .icon {
+    color: var(--c-text2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--c-bg2);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.source-item.active .icon {
+    color: var(--c-accent);
+    background: var(--c-accent-glow);
+}

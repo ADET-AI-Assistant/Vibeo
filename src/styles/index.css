@@ -192,12 +192,12 @@ img {
    ROWS CONTAINER
    ================================================================ */
 .rows-container {
-  max-width: 1400px;
+  max-width: 1700px;
   margin: 0 auto;
-  padding: 1.5rem 1.5rem 3rem;
+  padding: 1.5rem 4% 4rem;
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
+  gap: 3.5rem;
 }
 
 @media (max-width: 850px) {

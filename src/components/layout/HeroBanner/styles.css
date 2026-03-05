@@ -18,7 +18,10 @@
 .hero {
     position: relative;
     width: 100%;
+    height: 70vh;
+    /* Reduced from 85vh */
     min-height: 520px;
+    /* Reduced from 600px */
     overflow: hidden;
     /* hides off-screen slides */
     display: flex;
@@ -56,7 +59,16 @@
     background-size: cover;
     background-position: center 20%;
     background-repeat: no-repeat;
-    filter: brightness(0.55);
+    filter: brightness(0.65);
+    transition: transform 12s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: scale(1.1);
+    /* Subtle default zoom */
+}
+
+/* Active slide gets the Ken Burns zoom-in */
+.hero-slide[aria-hidden="false"] .hero-bg {
+    transform: scale(1.15);
+    /* Slow move forward */
 }
 
 /* Gradient overlays inside each slide */
@@ -64,9 +76,11 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg,
-            rgba(13, 13, 13, 0.96) 0%,
-            rgba(13, 13, 13, 0.7) 40%,
-            transparent 70%);
+            rgba(13, 13, 13, 1) 0%,
+            rgba(13, 13, 13, 0.85) 25%,
+            rgba(13, 13, 13, 0.4) 50%,
+            transparent 100%);
+    z-index: 1;
 }
 
 .hero-grad-bottom {
@@ -74,8 +88,9 @@
     inset: 0;
     background: linear-gradient(0deg,
             rgba(13, 13, 13, 1) 0%,
-            rgba(13, 13, 13, 0.3) 35%,
-            transparent 60%);
+            rgba(13, 13, 13, 0.6) 20%,
+            transparent 50%);
+    z-index: 1;
 }
 
 .hero-grad-top {
@@ -83,8 +98,9 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 100px;
-    background: linear-gradient(180deg, rgba(13, 13, 13, 0.6) 0%, transparent 100%);
+    height: 140px;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, transparent 100%);
+    z-index: 1;
 }
 
 /* Content layer — sits above the track, animates in on slide change */
@@ -107,13 +123,13 @@
 }
 
 .hero-title {
-    font-size: clamp(1.8rem, 4vw, 3rem);
-    font-weight: 800;
+    font-size: clamp(2.5rem, 6vw, 4.2rem);
+    font-weight: 900;
     line-height: 1.1;
     letter-spacing: -0.02em;
     color: #fff;
     text-shadow: 0 2px 20px rgba(0, 0, 0, 0.5);
-    margin-bottom: 0.75rem;
+    margin-bottom: 1rem;
     /* Allow logo images inside the h1 */
     display: flex;
     align-items: flex-end;
@@ -176,11 +192,19 @@
 }
 
 .hero-overview {
-    font-size: 0.88rem;
-    line-height: 1.65;
+    font-size: 1.1rem;
+    line-height: 1.6;
     color: var(--c-text2);
-    margin-bottom: 1.5rem;
-    max-width: 480px;
+    margin-bottom: 2.5rem;
+    max-width: 900px;
+    /* Further expanded from 800px */
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    line-clamp: 5;
+    /* Standard property for compatibility */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    opacity: 0.9;
 }
 
 .hero-actions {

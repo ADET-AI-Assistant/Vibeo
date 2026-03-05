@@ -36,6 +36,10 @@
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .theme-info {
