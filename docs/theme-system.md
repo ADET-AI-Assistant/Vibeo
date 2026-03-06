@@ -1,6 +1,6 @@
 # Theme System & UI Design 🎨
 
-Vibeo features a premium, modern visual aesthetic that sets it apart. The primary design language used is an implementation of "Glassmorphism," paired with deep, immersive background aesthetics reminiscent of an elite streaming platform.
+Vibeo features a premium, modern visual aesthetic that sets it apart. The primary design language used is an implementation of "Glassmorphism," paired with deep, immersive background aesthetics reminiscent of an elite streaming platform
 
 ## Visual Identity
 
