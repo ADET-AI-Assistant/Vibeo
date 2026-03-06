@@ -168,11 +168,9 @@ export const querySmartSearchAI = async (query) => {
 
     // Helper to print a clean table in the console for developers
     const logAction = (source, meaning) => {
-        // We use an object instead of an array to prevent the numeric (index) column,
-        // and instead use the Search Query as the explicit label
+        const rowLabel = query ? `"${query}"` : "Empty Query";
         console.table({
-            "Search Query": {
-                "Search Query": query,
+            [rowLabel]: {
                 "Database Lookup Match": normalizedQuery,
                 "Data Source": source,
                 "Explanation": meaning
