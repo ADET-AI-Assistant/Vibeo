@@ -21,11 +21,15 @@ export default defineConfig({
     },
     proxy: {
       // Proxy fanart.tv API calls to bypass CORS
-      // Frontend calls /fanart-api/... → forwarded to webservice.fanart.tv/v3/...
       '/fanart-api': {
         target: 'https://webservice.fanart.tv/v3',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/fanart-api/, ''),
+      },
+      // Proxy local API calls to Vercel dev server
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
       },
     },
   },

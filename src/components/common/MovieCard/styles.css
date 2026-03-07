@@ -5,6 +5,7 @@
     position: relative;
     cursor: pointer;
     transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+    container-type: inline-size;
 }
 
 .mc--hovered {
@@ -372,4 +373,31 @@
 .mc__skeleton-year {
     width: 40%;
     height: 0.75rem;
+}
+
+/* ================================================================
+   CONTAINER RESPONSIVENESS
+   ================================================================ */
+@container (max-width: 180px) {
+    .mc__details-synopsis {
+        display: none;
+    }
+    
+    .mc__genre-tag {
+        font-size: 0.5rem;
+        padding: 0.15rem 0.3rem;
+    }
+    
+    .mc__details-panel {
+        padding: 0.75rem;
+    }
+    
+    .mc__details-title {
+        font-size: 0.85rem;
+    }
+
+    .mc__btn {
+        padding: 0.25rem 0;
+        font-size: 0.65rem;
+    }
 }
