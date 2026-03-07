@@ -11,8 +11,8 @@
 
 import { fetchTMDB } from './tmdbClient';
 
-const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
-const HF_API_KEY = import.meta.env.VITE_HF_API_KEY;
+const GROQ_API_KEY = import.meta.env.GROQ_API;
+const HF_API_KEY = import.meta.env.HUGGING_FACE_API;
 
 const GROQ_MODEL = 'llama-3.3-70b-versatile';
 const HF_MODEL = 'mistralai/Mistral-7B-Instruct-v0.3';
@@ -122,17 +122,11 @@ const enrichWithTMDB = async (titles) => {
 
 // ── Groq Provider ─────────────────────────────────────────────
 const queryGroq = async (messages) => {
-    if (!GROQ_API_KEY) {
-        console.warn('[Vibey] Groq API key not configured, skipping.');
-        return null;
-    }
-
     try {
-        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        const response = await fetch('/api/groq', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${GROQ_API_KEY}`,
             },
             body: JSON.stringify({
                 model: GROQ_MODEL,
@@ -161,17 +155,11 @@ const queryGroq = async (messages) => {
 
 // ── HuggingFace Provider ──────────────────────────────────────
 const queryHuggingFace = async (messages) => {
-    if (!HF_API_KEY) {
-        console.warn('[Vibey] HuggingFace API key not configured, skipping.');
-        return null;
-    }
-
     try {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${HF_MODEL}/v1/chat/completions`, {
+        const response = await fetch('/api/huggingface', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${HF_API_KEY}`,
             },
             body: JSON.stringify({
                 model: HF_MODEL,
@@ -255,5 +243,5 @@ export const sendVibeyMessage = async (conversationHistory) => {
  * Check if any AI provider is configured for Vibey.
  */
 export const hasVibeyProvider = () => {
-    return !!(GROQ_API_KEY || HF_API_KEY);
+    return true; // Proxy via Vercel removes need for client-side keys
 };
