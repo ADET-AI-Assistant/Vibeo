@@ -98,6 +98,16 @@ const enrichWithTMDB = async (titles) => {
             if (data?.results?.length > 0) {
                 // Pick the best match (first result with a poster)
                 const best = data.results.find(r => r.poster_path) || data.results[0];
+
+                // Fetch extra details for trailers
+                const details = await fetchTMDB(`/${best.media_type || 'movie'}/${best.id}`, {
+                    append_to_response: 'videos'
+                });
+
+                const trailer = details?.videos?.results?.find(
+                    v => (v.type === 'Trailer' || v.type === 'Teaser') && v.site === 'YouTube'
+                );
+
                 return {
                     id: best.id,
                     title: best.title || best.name,
@@ -107,6 +117,7 @@ const enrichWithTMDB = async (titles) => {
                     overview: best.overview,
                     media_type: best.media_type || 'movie',
                     posterUrl: best.poster_path ? `${TMDB_IMG_BASE}${best.poster_path}` : null,
+                    trailerKey: trailer?.key || null,
                 };
             }
         } catch (err) {

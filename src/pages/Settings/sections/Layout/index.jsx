@@ -12,7 +12,10 @@ const LayoutSection = () => {
         cardSize, setCardSize,
         glassLevel, setGlassLevel,
         showMetadata, setShowMetadata,
-        heroSource, setHeroSource
+        heroSource, setHeroSource,
+        heroAutoNext, setHeroAutoNext,
+        heroInterval, setHeroInterval,
+        heroVideoQuality, setHeroVideoQuality
     } = useLayout();
 
     const toggleMetadata = (key) => {
@@ -149,6 +152,71 @@ const LayoutSection = () => {
                         </div>
                         <div className="toggle-switch"></div>
                     </div>
+                </div>
+            </section>
+
+            {/* Carousel Playback Settings */}
+            <section className="settings-group">
+                <h3>Carousel Playback</h3>
+                <p>Configure how the hero spotlight behaves.</p>
+                <div className="playback-settings">
+                    <div className="setting-row">
+                        <div className="setting-info">
+                            <strong>Auto-Advance Slides</strong>
+                            <span>Automatically move to the next slide</span>
+                        </div>
+                        <div
+                            className={`toggle-item ${heroAutoNext ? 'active' : ''}`}
+                            onClick={() => setHeroAutoNext(!heroAutoNext)}
+                        >
+                            <div className="toggle-switch"></div>
+                        </div>
+                    </div>
+
+                    <div className="setting-row">
+                        <div className="setting-info">
+                            <strong>Advance Interval</strong>
+                            <span>How long each slide stays visible</span>
+                        </div>
+                        <div className="interval-selector">
+                            {[5000, 8000, 12000, 15000].map(val => (
+                                <button
+                                    key={val}
+                                    className={`interval-btn ${heroInterval === val ? 'active' : ''}`}
+                                    onClick={() => setHeroInterval(val)}
+                                >
+                                    {val / 1000}s
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Video Playback Quality */}
+            <section className="settings-group">
+                <h3>Video Playback</h3>
+                <p>Choose the default quality for carousel trailers.</p>
+                <div className="quality-selector">
+                    {[
+                        { id: 'hd720', label: '720p', desc: 'Standard HD' },
+                        { id: 'hd1080', label: '1080p', desc: 'Full HD' },
+                        { id: 'hd1440', label: '1440p', desc: 'Quad HD' },
+                        { id: 'hd2160', label: '2160p', desc: '4K Ultra HD' },
+                        { id: 'highres', label: 'Max', desc: 'Highest available' }
+                    ].map(q => (
+                        <div
+                            key={q.id}
+                            className={`quality-option ${heroVideoQuality === q.id ? 'active' : ''}`}
+                            onClick={() => setHeroVideoQuality(q.id)}
+                        >
+                            <div className="quality-info">
+                                <strong>{q.label}</strong>
+                                <span>{q.desc}</span>
+                            </div>
+                            {heroVideoQuality === q.id && <div className="check-badge"><Check size={12} /></div>}
+                        </div>
+                    ))}
                 </div>
             </section>
 

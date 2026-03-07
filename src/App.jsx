@@ -10,7 +10,7 @@
  * ───────────────────────────────────────────────────────────
  */
 
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useLayoutEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 
@@ -33,6 +33,7 @@ const CookiePreferences = lazy(() => import('@/pages/Legal/CookiePreferences'));
 const AIRecommender = lazy(() => import('@/pages/AIRecommender'));
 const SmartSearch = lazy(() => import('@/pages/SmartSearch'));
 const VibeyPage = lazy(() => import('@/pages/VibeyPage'));
+const ThemeStore = lazy(() => import('@/pages/ThemeStore'));
 
 /**
  * Premium Loading Fallback
@@ -46,7 +47,8 @@ const LoadingScreen = () => (
     alignItems: 'center',
     justifyContent: 'center',
     background: 'var(--c-bg)',
-    gap: '20px'
+    gap: '20px',
+    overflow: 'hidden'
   }}>
     <div className="navbar-logo" style={{ fontSize: '2rem' }}>
       <span className="logo-icon">V</span>
@@ -72,8 +74,15 @@ const App = () => {
   const location = useLocation();
 
   useEffect(() => {
+    // Disable browser scroll restoration to prevent "flashing" old scroll positions
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
+
+  useEffect(() => {
     // Basic route protection for onboarding flow
-    // We strictly check if isOnboarded is explicitly true or false to prevent flashing
+    // ... logic ...
     if (currentUser && isOnboarded !== null) {
       if (isOnboarded === false && location.pathname !== '/onboarding') {
         navigate('/onboarding');
@@ -82,6 +91,25 @@ const App = () => {
       }
     }
   }, [currentUser, isOnboarded, location.pathname, navigate]);
+
+  // Centralized Flicker-Free Scrollbar Management
+  useLayoutEffect(() => {
+    const noScrollbarPages = ['/vibey', '/smart-search', '/ai-match'];
+    const isNoScrollbarPage = noScrollbarPages.includes(location.pathname);
+
+    const html = document.documentElement;
+    if (isNoScrollbarPage) {
+      html.classList.add('no-scrollbar');
+    } else {
+      html.classList.remove('no-scrollbar');
+    }
+
+    // Cleanup to ensure no leaks
+    return () => {
+      // We don't necessarily want to remove it on every tiny re-render, 
+      // but just to be safe if the component unmounts for some reason.
+    };
+  }, [location.pathname]);
 
   return (
     /*
@@ -107,6 +135,7 @@ const App = () => {
           <Route path="/smart-search" element={<SmartSearch />} />
           <Route path="/vibey" element={<VibeyPage />} />
           <Route path="/watch/:id" element={<Watch />} />
+          <Route path="/theme-store" element={<ThemeStore />} />
 
           {/* Play page – dedicated player */}
           <Route path="/play/:id" element={<Play />} />
@@ -136,8 +165,8 @@ const App = () => {
         </Routes>
       </Suspense>
 
-      {/* Vibey AI Chatbot — global floating overlay */}
-      <VibeyChat />
+      {/* Vibey AI Chatbot — global floating overlay (Hidden on Settings page) */}
+      {location.pathname !== '/settings' && <VibeyChat />}
     </>
   );
 };

@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
+import { useLayout } from '../../../context/LayoutContext';
 
 const TrailerPlayer = memo(({ trailerKey, title, onLoad }) => {
+    const { heroVideoQuality } = useLayout();
     if (!trailerKey) return null;
 
-    const ytEmbedUrl = `https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&loop=1&playlist=${trailerKey}&start=5&enablejsapi=1&origin=${window.location.origin}`;
+    const ytEmbedUrl = `https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&modestbranding=1&iv_load_policy=3&loop=1&playlist=${trailerKey}&start=5&enablejsapi=1&origin=${window.location.origin}&vq=${heroVideoQuality}`;
 
     return (
         <div className="hero-trailer-wrap hero-trailer-wrap--visible">

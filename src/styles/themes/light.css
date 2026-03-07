@@ -3,16 +3,16 @@
     --c-bg: #f8fafc;
     --c-bg2: #f1f5f9;
     --c-surface: #ffffff;
-    --c-surface2: #e2e8f0;
-    --c-surface3: #cbd5e1;
-    --c-border: rgba(0, 0, 0, 0.05);
-    --c-border2: rgba(0, 0, 0, 0.1);
+    --c-surface2: #f1f5f9;
+    --c-surface3: #e2e8f0;
+    --c-border: rgba(0, 0, 0, 0.08);
+    --c-border2: rgba(0, 0, 0, 0.12);
 
-    --c-accent: #0f172a;
-    --c-accent-lt: #1e293b;
-    --c-accent-glow: rgba(15, 23, 42, 0.2);
+    --c-accent: #6e56cf;
+    --c-accent-lt: #7c66dc;
+    --c-accent-glow: rgba(110, 86, 207, 0.15);
 
-    --c-text: #020617;
-    --c-text2: #1e293b;
-    --c-muted: #475569;
+    --c-text: #0f172a;
+    --c-text2: #334155;
+    --c-muted: #64748b;
 }

@@ -33,9 +33,44 @@ const Watch = () => {
     const type = searchParams.get('type') || 'movie';
 
     /* ── State ── */
-    const { movie: movieMeta, similar, loading } = useMovieDetail(id, type);
+    const { movie: movieMeta, similar, loading, error } = useMovieDetail(id, type);
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
     const { isWatchlisted, toggleWatchlist } = useUserMovies();
+
+    if (error) {
+        return (
+            <div className="page-wrapper">
+                <Header />
+                <main className="loading-center" style={{ minHeight: '60vh', gap: '1.5rem' }}>
+                    <div style={{ fontSize: '4rem' }}>🎬</div>
+                    <div style={{ textAlign: 'center' }}>
+                        <h2 style={{ color: 'var(--c-text)', marginBottom: '0.5rem' }}>{type === 'movie' ? 'Movie' : 'Show'} Not Found</h2>
+                        <p style={{ color: 'var(--c-muted)', maxWidth: '400px' }}>
+                            We couldn't find the {type} you're looking for. It might have been removed or the ID is incorrect.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => navigate(-1)}
+                        style={{
+                            padding: '0.8rem 2rem',
+                            background: 'var(--c-accent)',
+                            color: 'white',
+                            borderRadius: '12px',
+                            fontWeight: 600,
+                            border: 'none',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s'
+                        }}
+                        onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                        Go Back
+                    </button>
+                </main>
+                <Footer />
+            </div>
+        );
+    }
 
     const inWatchlist = movieMeta ? isWatchlisted(movieMeta.id) : false;
 

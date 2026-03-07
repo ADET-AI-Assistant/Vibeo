@@ -52,7 +52,7 @@
 .vp-new-chat-btn:hover {
     background: var(--c-accent);
     border-color: var(--c-accent);
-    color: #fff;
+    color: var(--c-white);
 }
 
 .vp-sidebar-toggle {

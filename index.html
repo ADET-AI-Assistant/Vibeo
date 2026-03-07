@@ -1,38 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/vibeo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Cross-Origin Policies for Firebase Auth -->
-    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
-    <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none" />
 
-    <!-- SEO Meta Tags -->
-    <title>Vibeo — AI Movie Mood-Matching &amp; Streaming</title>
-    <meta
-      name="description"
-      content="Vibeo is a personal movie streaming and AI-powered mood-matching recommendation platform. Discover what to watch based on your mood."
-    />
-    <meta name="keywords" content="movie streaming, mood matching, AI recommendations, TMDB, Vibeo" />
-    <meta name="author" content="Vibeo" />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/vibeo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="Vibeo — AI Movie Mood-Matching" />
-    <meta property="og:description" content="Discover movies matched to your mood, powered by Content-Based Filtering." />
-    <meta property="og:type" content="website" />
+  <!-- Cross-Origin Policies for Firebase Auth -->
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin-allow-popups" />
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="unsafe-none" />
 
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- SEO Meta Tags -->
+  <title>Vibeo — AI Movie Mood-Matching &amp; Streaming</title>
+  <meta name="description"
+    content="Vibeo is a personal movie streaming and AI-powered mood-matching recommendation platform. Discover what to watch based on your mood." />
+  <meta name="keywords" content="movie streaming, mood matching, AI recommendations, TMDB, Vibeo" />
+  <meta name="author" content="Vibeo" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Vibeo — AI Movie Mood-Matching" />
+  <meta property="og:description" content="Discover movies matched to your mood, powered by Content-Based Filtering." />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Critical Scrollbar Styles (Prevents Layout Shift / Jump) -->
+  <style>
+    html {
+      scrollbar-gutter: stable !important;
+    }
+
+    /* Webkit Browsers */
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(128, 128, 128, 0.3);
+      border-radius: 10px;
+    }
+
+    /* Firefox */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(128, 128, 128, 0.3) transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

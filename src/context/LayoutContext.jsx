@@ -26,9 +26,35 @@ export const LayoutProvider = ({ children }) => {
         return localStorage.getItem('vibeo-hero-source') || 'trending';
     });
 
+    const [heroAutoNext, setHeroAutoNext] = useState(() => {
+        const saved = localStorage.getItem('vibeo-hero-autonext');
+        return saved !== null ? JSON.parse(saved) : true;
+    });
+
+    const [heroInterval, setHeroInterval] = useState(() => {
+        const saved = localStorage.getItem('vibeo-hero-interval');
+        return saved ? Number(saved) : 8000;
+    });
+
+    const [heroVideoQuality, setHeroVideoQuality] = useState(() => {
+        return localStorage.getItem('vibeo-hero-quality') || 'hd1080';
+    });
+
     useEffect(() => {
         localStorage.setItem('vibeo-hero-source', heroSource);
     }, [heroSource]);
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-hero-autonext', JSON.stringify(heroAutoNext));
+    }, [heroAutoNext]);
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-hero-interval', heroInterval.toString());
+    }, [heroInterval]);
+
+    useEffect(() => {
+        localStorage.setItem('vibeo-hero-quality', heroVideoQuality);
+    }, [heroVideoQuality]);
 
     useEffect(() => {
         localStorage.setItem('vibeo-card-size', cardSize);
@@ -48,6 +74,9 @@ export const LayoutProvider = ({ children }) => {
         setCardSize('medium');
         setGlassLevel('subtle');
         setHeroSource('trending');
+        setHeroAutoNext(true);
+        setHeroInterval(8000);
+        setHeroVideoQuality('hd1080');
         setShowMetadata({
             rating: true,
             year: true,
@@ -65,6 +94,12 @@ export const LayoutProvider = ({ children }) => {
         setShowMetadata,
         heroSource,
         setHeroSource,
+        heroAutoNext,
+        setHeroAutoNext,
+        heroInterval,
+        setHeroInterval,
+        heroVideoQuality,
+        setHeroVideoQuality,
         resetLayout
     };
 

@@ -19,9 +19,12 @@ import {
     autoTitleChat,
 } from '@/api/vibeyChatService';
 import Header from '@/components/layout/Header';
+import WatchlistDropdown from '@/components/common/WatchlistDropdown';
+import TrailerModal from '@/components/common/TrailerModal';
 import {
     Sparkles, Send, Plus, MessageSquare, Trash2,
     Pencil, Check, X, Play, Eye, PanelLeftClose, PanelLeftOpen,
+    Video
 } from 'lucide-react';
 import './styles.css';
 import './Sidebar.css';
@@ -94,6 +97,17 @@ const VibeyPage = () => {
 
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
+
+    // Trailer state
+    const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+    const [activeTrailerId, setActiveTrailerId] = useState(null);
+
+    const openTrailer = useCallback((e, trailerKey) => {
+        e.stopPropagation();
+        if (!trailerKey) return;
+        setActiveTrailerId(trailerKey);
+        setIsTrailerOpen(true);
+    }, []);
 
     // ── Load chats on mount ──
     useEffect(() => {
@@ -441,9 +455,23 @@ const VibeyPage = () => {
                                                                     <button className="vp-movie-btn vp-movie-btn--primary" onClick={(e) => handleWatchClick(movie, e)}>
                                                                         <Play size={12} /> Watch
                                                                     </button>
+
+                                                                    {movie.trailerKey && (
+                                                                        <button
+                                                                            className="vp-movie-btn vp-movie-btn--secondary"
+                                                                            onClick={(e) => openTrailer(e, movie.trailerKey)}
+                                                                        >
+                                                                            <Video size={12} /> Trailer
+                                                                        </button>
+                                                                    )}
+
                                                                     <button className="vp-movie-btn vp-movie-btn--secondary" onClick={(e) => handleDetailsClick(movie, e)}>
                                                                         <Eye size={12} /> Details
                                                                     </button>
+
+                                                                    <div className="vp-movie-watchlist">
+                                                                        <WatchlistDropdown movie={movie} compact={true} />
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -495,6 +523,11 @@ const VibeyPage = () => {
                             </button>
                         </div>
                         <p className="vp-disclaimer">Vibey can make mistakes. Verify movie info on TMDB.</p>
+                        <TrailerModal
+                            isOpen={isTrailerOpen}
+                            videoId={activeTrailerId}
+                            onClose={() => setIsTrailerOpen(false)}
+                        />
                     </div>
                 </main>
             </div>

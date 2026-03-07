@@ -6,8 +6,10 @@
 .vp-layout {
     display: grid;
     grid-template-columns: 280px 1fr;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 64px);
+    /* Sync with header height precisely */
     overflow: hidden;
+    position: relative;
 }
 
 .vp-main {
@@ -37,7 +39,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--c-white);
     animation: vibey-float 3s ease-in-out infinite;
 }
 
@@ -79,6 +81,7 @@
     padding: 8px 18px;
     border-radius: var(--r-pill);
     border: 1px solid var(--c-border2);
+    /* Corrected from malformed snippet */
     background: var(--c-surface);
     color: var(--c-text2);
     font-size: 0.82rem;
@@ -129,7 +132,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--c-white);
 }
 
 .vp-login-card h2 {

@@ -28,6 +28,24 @@ const PROVIDER_LABELS = {
     huggingface: { name: 'HuggingFace · Mistral', color: '#fbbf24' },
 };
 
+const AIRecommender = () => {
+    const navigate = useNavigate();
+
+    // Assuming useAuth and useUserMovies are defined elsewhere
+    // const { currentUser } = useAuth();
+    // const { isWatchlisted, toggleWatchlist } = useUserMovies();
+
+    // Hide global scrollbar for this specific page
+    useEffect(() => {
+        const html = document.documentElement;
+        html.classList.add('no-scrollbar');
+        return () => html.classList.remove('no-scrollbar');
+    }, []);
+
+    // Placeholder for AIRecommender content
+    return null;
+};
+
 const SmartSearch = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();

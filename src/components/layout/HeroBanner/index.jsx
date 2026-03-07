@@ -4,12 +4,12 @@ import MovieLogo from '../../common/MovieLogo';
 import HeroSlide from './HeroSlide';
 import TrailerPlayer from './TrailerPlayer';
 import { useTrailers } from '../../../hooks/useTrailers';
+import { useLayout } from '../../../context/LayoutContext';
 import './styles.css';
-
-const INTERVAL_MS = 8000;
 
 const HeroBanner = ({ movies = [] }) => {
     const navigate = useNavigate();
+    const { heroAutoNext, heroInterval } = useLayout();
     const total = Math.min(movies.length, 5);
     const timerRef = useRef(null);
 
@@ -22,11 +22,11 @@ const HeroBanner = ({ movies = [] }) => {
     /* ── Start/stop auto-advance ── */
     const startAutoAdvance = useCallback(() => {
         if (timerRef.current) clearInterval(timerRef.current);
-        if (total < 2) return;
+        if (total < 2 || !heroAutoNext) return;
         timerRef.current = setInterval(() => {
             setActiveIndex(prev => (prev + 1) % total);
-        }, INTERVAL_MS);
-    }, [total]);
+        }, heroInterval);
+    }, [total, heroAutoNext, heroInterval]);
 
     const stopAutoAdvance = useCallback(() => {
         if (timerRef.current) {

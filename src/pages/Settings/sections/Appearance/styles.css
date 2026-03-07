@@ -69,19 +69,26 @@
 }
 
 .browse-store-btn {
-    background: transparent;
-    border: 1px solid var(--c-accent);
-    color: var(--c-text);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    background: var(--c-accent);
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
     font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    box-shadow: 0 4px 12px var(--c-accent-glow);
 }
 
 .browse-store-btn:hover {
-    background: rgba(168, 85, 247, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px var(--c-accent-glow);
 }
 
 .quick-switch .toggle-group {
@@ -111,6 +118,10 @@
 }
 
 /* Sections */
+.favorites-section {
+    margin-bottom: 3.5rem;
+}
+
 .favorites-section h3,
 .background-section h3 {
     font-size: 0.85rem;
@@ -160,22 +171,50 @@
 
 .theme-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 220px));
+    gap: 1rem;
+    max-width: 100%;
+}
+
+.empty-favorites {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    background: var(--c-surface);
+    border: 2px dashed var(--c-surface3);
+    border-radius: 12px;
+    color: var(--c-text2);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.empty-favorites:hover {
+    border-color: var(--c-accent);
+    color: var(--c-text);
+    background: var(--c-surface2);
+}
+
+.empty-favorites p {
+    margin-top: 1rem;
+    font-size: 0.9rem;
 }
 
 .theme-selection-card {
     background-color: var(--c-surface);
     border: 1px solid var(--c-surface3);
     border-radius: 10px;
-    padding: 1rem;
+    padding: 0.5rem 0.75rem;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     cursor: pointer;
     text-align: left;
     position: relative;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .theme-selection-card:hover {
@@ -383,5 +422,20 @@
         width: 80px;
         height: 80px;
         font-size: 2rem;
+    }
+
+    .theme-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .theme-selection-card {
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 450px) and (max-width: 600px) {
+    .theme-grid {
+        grid-template-columns: 1fr 1fr;
     }
 }

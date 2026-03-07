@@ -54,7 +54,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #fff;
+    color: var(--c-white);
     flex-shrink: 0;
     margin-top: 2px;
 }
@@ -81,7 +81,7 @@
 
 .vp-msg--user .vp-msg-bubble {
     background: linear-gradient(135deg, var(--c-accent), var(--c-accent-lt));
-    color: #fff;
+    color: var(--c-white);
     border-bottom-right-radius: 4px;
 }
 
@@ -169,8 +169,14 @@
 
 .vp-movie-actions {
     display: flex;
-    gap: 6px;
-    margin-top: 4px;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.vp-movie-watchlist {
+    margin-left: auto;
 }
 
 .vp-movie-btn {
@@ -189,7 +195,7 @@
 
 .vp-movie-btn--primary {
     background: var(--c-accent);
-    color: #fff;
+    color: var(--c-white);
 }
 
 .vp-movie-btn--primary:hover {
@@ -302,7 +308,7 @@
     border-radius: 50%;
     border: none;
     background: var(--c-accent);
-    color: #fff;
+    color: var(--c-white);
     display: flex;
     align-items: center;
     justify-content: center;

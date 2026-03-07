@@ -12,26 +12,6 @@
 /* ================================================================
    DESIGN TOKENS & THEMES
    ================================================================ */
-@import "./themes/default.css";
-@import "./themes/ocean.css";
-@import "./themes/crimson.css";
-@import "./themes/forest.css";
-@import "./themes/midnight.css";
-@import "./themes/rose.css";
-@import "./themes/coffee.css";
-@import "./themes/aurora.css";
-@import "./themes/abyss.css";
-@import "./themes/cyberwire.css";
-@import "./themes/sunset.css";
-@import "./themes/light.css";
-@import "./themes/oled.css";
-@import "./themes/nord.css";
-@import "./themes/dracula.css";
-@import "./themes/slate.css";
-@import "./themes/terminal.css";
-@import "./themes/animated.css";
-@import "./patterns.css";
-
 :root {
   /* Common */
   --c-text: #ececec;
@@ -52,7 +32,35 @@
   /* Layout Preferences (Defaults) */
   --card-min-width: 140px;
   --glass-blur: blur(0px);
+
+  /* Constant colors for components that should stay dark/light regardless of theme */
+  --c-white: #ffffff;
+  --c-black: #000000;
 }
+
+/* ================================================================
+   THEMES & PATTERNS (Overrides)
+   ================================================================ */
+@import "./themes/default.css";
+@import "./themes/ocean.css";
+@import "./themes/crimson.css";
+@import "./themes/forest.css";
+@import "./themes/midnight.css";
+@import "./themes/rose.css";
+@import "./themes/coffee.css";
+@import "./themes/aurora.css";
+@import "./themes/abyss.css";
+@import "./themes/cyberwire.css";
+@import "./themes/sunset.css";
+@import "./themes/light.css";
+@import "./themes/oled.css";
+@import "./themes/nord.css";
+@import "./themes/dracula.css";
+@import "./themes/slate.css";
+@import "./themes/terminal.css";
+@import "./themes/animated.css";
+@import "./patterns.css";
+
 
 body[data-card-size="small"] {
   --card-min-width: 110px;
@@ -85,6 +93,10 @@ body[data-glass-level="glassy"] {
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  overflow-y: auto;
+  /* Root scroll container */
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
 }
 
 body {
@@ -95,7 +107,30 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: visible;
+  /* Prevent body-level scrollbars */
+}
+
+/* ── Special Page Utility (Invisible Scrolling) ── */
+html.no-scrollbar,
+html.no-scrollbar body,
+html.no-scrollbar * {
+  scrollbar-width: none !important;
+  /* Firefox */
+  -ms-overflow-style: none !important;
+  /* IE/Edge */
+}
+
+html.no-scrollbar::-webkit-scrollbar,
+html.no-scrollbar *::-webkit-scrollbar {
+  display: none !important;
+  /* Chrome/Safari */
+}
+
+html.no-scrollbar,
+html.no-scrollbar body {
+  overflow: auto !important;
+  /* Allow scrolling */
 }
 
 a {
@@ -131,13 +166,17 @@ img {
   border-radius: var(--r-pill);
 }
 
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
 /* ================================================================
    ANIMATIONS
    ================================================================ */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(4px);
   }
 
   to {

@@ -8,7 +8,9 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
 import { sendVibeyMessage } from '@/api/vibeyAI';
+import { createChat, updateChatMessages, autoTitleChat } from '@/api/vibeyChatService';
 import { Sparkles, Send, X, Play, Eye, MessageCircle, Maximize2 } from 'lucide-react';
 import './styles.css';
 
@@ -25,10 +27,15 @@ const QUICK_PROMPTS = [
 const VibeyChat = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
+    const { currentUser } = useAuth();
+    const uid = currentUser?.uid;
 
-    // Hide entirely on the dedicated /vibey page
+    const [isOpen, setIsOpen] = useState(false);
+    const [activeChatId, setActiveChatId] = useState(null);
+
+    // Hide entirely on the dedicated /vibey page or the player page (/play/)
     const isOnVibeyPage = location.pathname === '/vibey';
+    const isOnPlayerPage = location.pathname.startsWith('/play/');
 
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -54,17 +61,32 @@ const VibeyChat = () => {
     const handleSend = useCallback(async (text) => {
         const trimmed = (text || input).trim();
         if (!trimmed || isTyping) return;
+        if (!uid) {
+            // Fallback for non-logged in users: just UI-only chat
+            // (Wait, actually VibeyPage requires login, but floating chat maybe not?)
+            // For consistency with VibeyPage, we should probably encourage login, 
+            // but let's at least keep UI working if not logged in.
+        }
 
         // Clear input
         setInput('');
 
         // Add user message to UI
         const userMsg = { role: 'user', content: trimmed, timestamp: Date.now() };
-        setMessages(prev => [...prev, userMsg]);
+        const newMessages = [...messages, userMsg];
+        setMessages(newMessages);
 
         // Update conversation history for context
         const newHistory = [...conversationHistory, { role: 'user', content: trimmed }];
         setConversationHistory(newHistory);
+
+        // Firestore: Create chat if needed
+        let chatId = activeChatId;
+        if (uid && !chatId) {
+            const title = autoTitleChat(trimmed);
+            chatId = await createChat(uid, title);
+            if (chatId) setActiveChatId(chatId);
+        }
 
         // Show typing indicator
         setIsTyping(true);
@@ -76,17 +98,38 @@ const VibeyChat = () => {
             const vibeyMsg = {
                 role: 'assistant',
                 content: response.text,
+                rawContent: response.rawResponse || response.text,
                 movies: response.movies || [],
                 timestamp: Date.now(),
             };
 
-            setMessages(prev => [...prev, vibeyMsg]);
+            const updatedMessages = [...newMessages, vibeyMsg];
+            setMessages(updatedMessages);
 
-            // Update conversation history with response (use rawResponse for context)
+            // Update conversation history with response
             setConversationHistory(prev => [
                 ...prev,
                 { role: 'assistant', content: response.rawResponse || response.text },
             ]);
+
+            // Persist to Firestore if logged in
+            if (uid && chatId) {
+                const storableMessages = updatedMessages.map(m => ({
+                    role: m.role,
+                    content: m.content,
+                    ...(m.rawContent ? { rawContent: m.rawContent } : {}),
+                    ...(m.movies?.length ? { movies: m.movies } : {}),
+                    timestamp: m.timestamp,
+                }));
+
+                // Auto-title on first exchange
+                let title = undefined;
+                if (updatedMessages.length === 2) {
+                    title = autoTitleChat(trimmed);
+                }
+
+                await updateChatMessages(uid, chatId, storableMessages, title);
+            }
         } catch (err) {
             console.error('[Vibey] Send error:', err);
             setMessages(prev => [
@@ -101,7 +144,7 @@ const VibeyChat = () => {
         } finally {
             setIsTyping(false);
         }
-    }, [input, isTyping, conversationHistory]);
+    }, [input, isTyping, conversationHistory, messages, activeChatId, uid]);
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
@@ -126,10 +169,11 @@ const VibeyChat = () => {
 
     const handleDetailsClick = (movie, e) => {
         e.stopPropagation();
-        navigate(`/watch/${movie.id}`);
+        const type = movie.media_type || 'movie';
+        navigate(`/watch/${movie.id}?type=${type}`);
     };
 
-    if (isOnVibeyPage) return null;
+    if (isOnVibeyPage || isOnPlayerPage) return null;
 
     return (
         <div className="vibey-container">
