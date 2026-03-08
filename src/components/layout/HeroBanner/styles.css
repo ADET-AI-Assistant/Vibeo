@@ -350,7 +350,7 @@
     /* 16:9 width based on height */
     min-height: 56.25vw;
     /* 16:9 height based on width */
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     transform: translate(-50%, -50%);
     border: none;
