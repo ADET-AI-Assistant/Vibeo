@@ -9,7 +9,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
-import Header from '@/components/layout/Header';
 import MovieRow from '@/components/layout/MovieRow';
 import MovieLogo from '@/components/common/MovieLogo';
 import StarRating from '@/components/common/StarRating';
@@ -19,7 +18,6 @@ import CastScroller from '@/components/common/CastScroller';
 import ImageGallery from '@/components/common/ImageGallery';
 import ReviewSection from '@/components/common/ReviewSection';
 import CollectionGrid from '@/components/layout/CollectionGrid';
-import Footer from '@/components/layout/Footer';
 import { useMovieDetail } from '@/hooks/useMovieDetail';
 import { useUserMovies } from '@/hooks/useUserMovies';
 import { TMDB_IMAGE_BASE, TMDB_BACKDROP_BASE } from '@/config/constants';
@@ -40,7 +38,6 @@ const Watch = () => {
     if (error) {
         return (
             <div className="page-wrapper">
-                <Header />
                 <main className="loading-center" style={{ minHeight: '60vh', gap: '1.5rem' }}>
                     <div style={{ fontSize: '4rem' }}>🎬</div>
                     <div style={{ textAlign: 'center' }}>
@@ -67,7 +64,6 @@ const Watch = () => {
                         Go Back
                     </button>
                 </main>
-                <Footer />
             </div>
         );
     }
@@ -84,8 +80,6 @@ const Watch = () => {
 
     return (
         <div className="page-wrapper">
-            <Header />
-
             <main>
                 {/* ═══════════════════════════════════════════════
                     DETAIL HERO — Backdrop + poster + info
@@ -251,10 +245,6 @@ const Watch = () => {
                     )}
                 </div>
             </main>
-
-
-
-            <Footer />
 
             <TrailerModal
                 isOpen={isTrailerOpen}
