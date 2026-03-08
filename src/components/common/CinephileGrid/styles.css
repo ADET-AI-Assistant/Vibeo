@@ -1,0 +1,234 @@
+.cinephile-grid-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 2.5rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    /* Back to hidden for clean card edges */
+}
+
+.grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 0.5rem;
+}
+
+.grid-title-area h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+}
+
+.grid-title-area p {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: var(--c-muted);
+}
+
+.grid-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    color: var(--c-muted);
+}
+
+.legend-square {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+/* Grid Tiers */
+.lvl-0 {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.lvl-1 {
+    background: #0e4429;
+    box-shadow: 0 0 5px rgba(14, 68, 41, 0.3);
+}
+
+.lvl-2 {
+    background: #006d32;
+    box-shadow: 0 0 8px rgba(0, 109, 50, 0.4);
+}
+
+.lvl-3 {
+    background: #26a641;
+    box-shadow: 0 0 12px rgba(38, 166, 65, 0.5);
+}
+
+.lvl-4 {
+    background: #39d353;
+    box-shadow: 0 0 15px rgba(57, 211, 83, 0.6);
+}
+
+/* Main Grid Layout */
+.grid-scroll-wrapper {
+    position: relative;
+    display: flex;
+    gap: 1.25rem;
+    overflow-x: auto;
+    /* Extra top padding for tooltips, small horizontal padding for edge squares */
+    padding: 3rem 0.5rem 1rem;
+    margin: 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+.grid-scroll-wrapper::-webkit-scrollbar {
+    height: 6px;
+}
+
+.grid-scroll-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.grid-labels-y {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem 0;
+    font-size: 0.65rem;
+    color: var(--c-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.grid-main {
+    display: flex;
+    gap: 4px;
+    padding-right: 2rem;
+    /* Buffer for the last tooltips in the scroll */
+}
+
+.grid-column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.grid-square {
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.grid-square:hover {
+    transform: scale(1.3);
+    z-index: 10;
+    border: 1px solid #fff;
+}
+
+/* Tooltip */
+.square-tooltip {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: #161b22;
+    color: #fff;
+    padding: 0.6rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.15s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    z-index: 1000;
+}
+
+.grid-square:hover .square-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-10px);
+}
+
+/* Edge-Aware Tooltip Alignment */
+/* For the rightmost columns (today/recent), align tooltips to the left */
+.grid-column:nth-last-child(-n+5) .square-tooltip {
+    transform: translateX(-100%) translateY(0);
+    left: 100%;
+}
+
+.grid-column:nth-last-child(-n+5) .grid-square:hover .square-tooltip {
+    transform: translateX(-100%) translateY(-10px);
+}
+
+/* For the leftmost columns (start of 52 weeks), align tooltips to the right */
+.grid-column:nth-child(-n+5) .square-tooltip {
+    transform: translateX(0) translateY(0);
+    left: 0;
+}
+
+.grid-column:nth-child(-n+5) .grid-square:hover .square-tooltip {
+    transform: translateX(0) translateY(-10px);
+}
+
+.square-tooltip strong {
+    color: #39d353;
+}
+
+.grid-months-x {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem 0 3.5rem;
+    font-size: 0.7rem;
+    color: var(--c-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+}
+
+.grid-skeleton {
+    height: 200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 24px;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+@media (max-width: 600px) {
+    .grid-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}
