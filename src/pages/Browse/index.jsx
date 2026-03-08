@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from '@/components/layout/Header';
 import MovieCard from '@/components/common/MovieCard';
 import StarRating from '@/components/common/StarRating';
 import TrailerModal from '@/components/common/TrailerModal';
@@ -185,8 +184,6 @@ const Browse = () => {
 
     return (
         <div className="page-wrapper">
-            <Header />
-
             <main className="browse-main">
                 {/* ── Filter Bar ── */}
                 <div className="browse-filter-bar">
