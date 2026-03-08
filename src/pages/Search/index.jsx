@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import MovieCard from '@/components/common/MovieCard';
 import { fetchTMDB } from '@/api/tmdbClient';
 import './styles.css';
@@ -82,8 +80,6 @@ const Search = () => {
 
     return (
         <div className="page-wrapper">
-            <Header />
-
             <main className="search-main fade-in-up">
                 <div className="search-header">
                     <h1 className="search-title">
@@ -116,8 +112,6 @@ const Search = () => {
                 )}
 
             </main>
-
-            <Footer />
         </div>
     );
 };
