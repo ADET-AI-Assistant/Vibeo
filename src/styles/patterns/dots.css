@@ -1,0 +1,5 @@
+[data-pattern="dots"] body {
+    background-image: radial-gradient(var(--c-border) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-attachment: fixed;
+}
