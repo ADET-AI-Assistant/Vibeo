@@ -1,0 +1,46 @@
+/* ── Detail Hero Structual ── */
+.detail-hero {
+    position: relative;
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    /* Prevent clipping of dropdowns */
+    background: var(--c-bg);
+    z-index: 10;
+    /* Ensure it stays above sections below it when menu is open */
+}
+
+.detail-hero__content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 6rem 2.5rem 3rem;
+    width: 100%;
+}
+
+@media (max-width: 992px) {
+    .detail-hero__content {
+        gap: 2rem;
+        padding-top: 5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .detail-hero {
+        min-height: auto;
+        padding-bottom: 2rem;
+    }
+
+    .detail-hero__content {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        padding: 4rem 1.5rem 2rem;
+        gap: 2rem;
+    }
+}
