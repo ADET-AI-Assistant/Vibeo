@@ -1,0 +1,37 @@
+.ai-header {
+    position: relative;
+    text-align: center;
+    padding: 2.5rem 1rem 2rem;
+    z-index: 1;
+}
+
+.ai-header h1 {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+    color: var(--c-text);
+    text-shadow: 0 0 30px var(--c-accent-glow);
+    position: relative;
+    display: inline-block;
+}
+
+.ai-header h1::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--c-accent), transparent);
+    border-radius: var(--r-pill);
+}
+
+.ai-header p {
+    color: var(--c-text2);
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    font-weight: 400;
+    opacity: 0.8;
+}
