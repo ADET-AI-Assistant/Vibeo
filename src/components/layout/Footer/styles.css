@@ -8,9 +8,10 @@
 }
 
 .site-footer__inner {
-    max-width: 1400px;
+    width: 100%;
+    max-width: 1850px;
     margin: 0 auto;
-    padding: 2.5rem 2rem 1.5rem;
+    padding: 2.5rem 4rem 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
