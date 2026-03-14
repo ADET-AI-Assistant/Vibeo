@@ -9,7 +9,7 @@ import './styles.css';
 
 const HeroBanner = ({ movies = [] }) => {
     const navigate = useNavigate();
-    const { heroAutoNext, heroInterval } = useLayout();
+    const { heroAutoNext, heroInterval, dataSaverMode } = useLayout();
     const total = Math.min(movies.length, 5);
     const timerRef = useRef(null);
 
@@ -98,7 +98,7 @@ const HeroBanner = ({ movies = [] }) => {
             </div>
 
             {/* ── TRAILER LAYER ───────────────────────────────────────── */}
-            {currentTrailerKey && (
+            {currentTrailerKey && !dataSaverMode && (
                 <div className={`hero-trailer-container ${trailerReady ? 'visible' : 'hidden'}`}>
                     <TrailerPlayer
                         trailerKey={currentTrailerKey}
@@ -107,6 +107,7 @@ const HeroBanner = ({ movies = [] }) => {
                     />
                 </div>
             )}
+
 
 
             {/* ── CONTENT LAYER ───────────────────────────────────────── */}
@@ -147,7 +148,7 @@ const HeroBanner = ({ movies = [] }) => {
 
                 <div className="hero-actions">
                     <button
-                        className="hero-btn-primary"
+                        className="hero-btn-primary hero-btn-watch"
                         onClick={() => navigate(`/watch/${movies[activeIndex].id}`)}
                     >
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -158,7 +159,7 @@ const HeroBanner = ({ movies = [] }) => {
 
                     {currentTrailerKey && (
                         <button
-                            className="hero-btn-secondary"
+                            className="hero-btn-secondary hero-btn-trailer"
                             onClick={() => setTrailerReady(true)}
                             style={{ gap: '10px' }}
                         >
@@ -168,7 +169,7 @@ const HeroBanner = ({ movies = [] }) => {
                     )}
 
                     <button
-                        className="hero-btn-secondary"
+                        className="hero-btn-secondary hero-btn-details"
                         onClick={() => navigate(`/watch/${movies[activeIndex].id}`)}
                     >
                         Details
