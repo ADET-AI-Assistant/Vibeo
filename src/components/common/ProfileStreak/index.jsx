@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flame, CheckCircle2 } from 'lucide-react';
-import { useUserMoviesContext } from '@/context/UserMoviesContext';
+import { useUserMoviesContext, getLocalISOString } from '@/context/UserMoviesContext';
 import './styles.css';
 
 const ProfileStreak = ({ className = "" }) => {
@@ -12,9 +12,10 @@ const ProfileStreak = ({ className = "" }) => {
     const isElite = currentStreak >= 7;
     const isMaster = currentStreak >= 30;
 
-    // Weekly progress logic (Sunday to Saturday)
+    // Weekly progress logic (Sunday to Saturday) based on local time
     const daysOfWeek = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const today = new Date();
+    const todayStr = getLocalISOString(today);
     const currentDayIndex = today.getDay(); // 0 = Sun, 1 = Mon, etc.
 
     // Calculate which days are part of the streak
@@ -22,15 +23,18 @@ const ProfileStreak = ({ className = "" }) => {
     // Actually our UserMoviesContext updates the streak as soon as they load the page, so lastActiveDate is likely today.
     const activeDays = new Array(7).fill(false);
 
-    // Simple inference: highlight the last 'currentStreak' days leading up to today
-    for (let i = 0; i < currentStreak; i++) {
-        const dayIdx = (currentDayIndex - i + 7) % 7;
-        // Only mark if it's within the current 7-day trailing window to avoid highlighting the whole week if streak > 7
-        // but for a "weekly view" we usually want to see the progress of the current calendar week.
-        // Let's just highlight the days that are part of the streak.
-        activeDays[dayIdx] = true;
-        // Optimization: if streak is very long, all 7 days of the view are active
-        if (i >= 6) break;
+    // Simple inference: highlight the last 'currentStreak' days leading up to the last active date
+    const lastActive = streakData.lastActiveDate;
+    if (lastActive) {
+        // If they checked in today or yesterday, the streak is alive
+        const lastActiveDateObj = new Date(lastActive + 'T00:00:00');
+        const lastActiveDayIdx = lastActiveDateObj.getDay();
+
+        for (let i = 0; i < currentStreak; i++) {
+            const dayIdx = (lastActiveDayIdx - i + 7) % 7;
+            activeDays[dayIdx] = true;
+            if (i >= 6) break;
+        }
     }
 
     return (
@@ -41,7 +45,6 @@ const ProfileStreak = ({ className = "" }) => {
                         <div className="fire-glow"></div>
                         <div className="fire-particles"></div>
                         <Flame
-                            size={100}
                             className="main-flame-icon"
                             fill="currentColor"
                         />
@@ -76,7 +79,7 @@ const ProfileStreak = ({ className = "" }) => {
                     return (
                         <div key={idx} className={`day-node ${isHit ? 'node-hit' : ''} ${isToday ? 'node-today' : ''}`}>
                             <div className="node-circle">
-                                {isHit ? <CheckCircle2 size={16} /> : <span>{day}</span>}
+                                {isHit && <CheckCircle2 size={16} />}
                             </div>
                             <span className="day-label">{day}</span>
                         </div>
