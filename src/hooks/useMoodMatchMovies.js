@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchTMDB } from '../api/tmdbClient';
-import { useAuth } from '../context/AuthContext';
+import { useUserMoviesContext } from '../context/UserMoviesContext';
 
 export const useMoodMatchMovies = () => {
-    const { favoriteMovies } = useAuth();
+    const { favoriteMovies } = useUserMoviesContext();
 
     return useQuery({
         queryKey: ['moodMatches', (favoriteMovies || []).map(m => m.id).join(',')],
