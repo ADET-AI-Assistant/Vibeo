@@ -1,0 +1,86 @@
+/* ================================================================
+   MOBILE BOTTOM NAVIGATION BAR
+   ================================================================ */
+
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(65px + env(safe-area-inset-bottom, 0px));
+    background: var(--c-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid var(--c-surface3);
+    padding: 0 0.5rem env(safe-area-inset-bottom, 0px) 0.5rem;
+    z-index: 9999;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 1100px) {
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+    }
+}
+
+.mobile-bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    color: var(--c-text-sec);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.mobile-bottom-nav-item .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    transition: all 0.25s ease;
+}
+
+.mobile-bottom-nav-item .label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    opacity: 0.8;
+}
+
+.mobile-bottom-nav-item.active .icon {
+    background: var(--c-accent-lt);
+    color: var(--c-accent);
+    box-shadow: 0 4px 8px rgba(147, 51, 234, 0.2);
+}
+
+.mobile-bottom-nav-item.active .label {
+    opacity: 1;
+    color: var(--c-accent);
+}
+
+
+
+/* Feedback State */
+.mobile-bottom-nav-item:active .icon {
+    transform: scale(0.9);
+    background: var(--c-surface2);
+}
+
+/* Page Spacing Adjustment */
+@media (max-width: 1100px) {
+    body.has-bottom-nav {
+        padding-bottom: calc(65px + env(safe-area-inset-bottom, 0px)) !important;
+    }
+}
