@@ -9,6 +9,7 @@
 
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchTMDB } from '../api/tmdbClient';
+import { getLocalISOString } from '../context/UserMoviesContext';
 
 const MAX_PAGES = 10; // Safety cap to prevent memory issues
 
@@ -69,12 +70,12 @@ export const useBrowseMovies = (sortId = 'popular', genreId = '') => {
                     break;
                 case 'now_playing':
                     params.sort_by = 'primary_release_date.desc';
-                    params['primary_release_date.lte'] = new Date().toISOString().split('T')[0];
-                    params['primary_release_date.gte'] = new Date(Date.now() - 90 * 86400000).toISOString().split('T')[0];
+                    params['primary_release_date.lte'] = getLocalISOString();
+                    params['primary_release_date.gte'] = getLocalISOString(new Date(Date.now() - 90 * 86400000));
                     break;
                 case 'upcoming':
                     params.sort_by = 'primary_release_date.asc';
-                    params['primary_release_date.gte'] = new Date().toISOString().split('T')[0];
+                    params['primary_release_date.gte'] = getLocalISOString();
                     break;
                 default:
                     params.sort_by = 'popularity.desc';
