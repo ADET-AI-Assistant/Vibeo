@@ -1,0 +1,8 @@
+$kind: http-request
+description: VIBEO API TEST
+url: ?tmdb_base_url=https://api.themoviedb.org/3&tmdb_api_key=05a3f3071ad3fa222ab689fb62ed0df1
+method: GET
+queryParams:
+  tmdb_base_url: https://api.themoviedb.org/3
+  tmdb_api_key: 05a3f3071ad3fa222ab689fb62ed0df1
+order: 1774934620706

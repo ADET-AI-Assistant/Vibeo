@@ -1,0 +1,18 @@
+$kind: http-request
+name: Discover Movies by Genre
+method: GET
+url: '{{tmdb_base_url}}/discover/movie'
+order: 7000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: language
+    value: en-US
+  - key: with_genres
+    value: '28,12'
+  - key: sort_by
+    value: popularity.desc
+  - key: vote_count.gte
+    value: '100'
+  - key: page
+    value: '1'

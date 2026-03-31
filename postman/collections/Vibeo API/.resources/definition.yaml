@@ -1,0 +1,24 @@
+$kind: collection
+name: Vibeo API
+description: API collection for the Vibeo movie streaming app. Covers TMDB movie data, AI-powered recommendations (Groq & HuggingFace proxies), and Vibey AI chat.
+variables:
+  - key: tmdb_base_url
+    value: 'https://api.themoviedb.org/3'
+  - key: tmdb_api_key
+    value: '{{VITE_TMDB_API_KEY}}'
+  - key: groq_api_key
+    value: '{{VITE_GROQ_API_KEY}}'
+  - key: hf_api_key
+    value: '{{VITE_HF_API_KEY}}'
+  - key: base_url
+    value: 'http://localhost:5173'
+  - key: movie_id
+    value: '550'
+  - key: tv_id
+    value: '1396'
+  - key: collection_id
+    value: '10'
+  - key: user_id
+    value: 'user123'
+  - key: chat_id
+    value: 'chat456'

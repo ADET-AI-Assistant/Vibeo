@@ -1,0 +1,23 @@
+$kind: http-request
+method: POST
+url: 'https://api.groq.com/openai/v1/chat/completions'
+order: 2000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{groq_api_key}}'
+body:
+  type: json
+  content: |-
+    {
+      "model": "llama-3.3-70b-versatile",
+      "messages": [
+        {
+          "role": "user",
+          "content": "You are a movie recommendation engine. The user's search query is: \"funny movies from the 90s\"\n\nBased on this query, recommend 8 to 12 movie or TV show titles that best match what they are looking for.\n\nCRITICAL: Return ONLY a valid JSON array of title strings. No markdown, no backticks, no explanations.\nExample: [\"The Martian\", \"Interstellar\", \"Gravity\", \"Apollo 13\"]"
+        }
+      ],
+      "temperature": 0.7,
+      "max_tokens": 500
+    }

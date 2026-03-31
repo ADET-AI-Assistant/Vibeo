@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get TV Show Images
+method: GET
+url: '{{tmdb_base_url}}/tv/{{tv_id}}/images'
+order: 4000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: include_image_language
+    value: 'en,null'

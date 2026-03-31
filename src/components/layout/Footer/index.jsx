@@ -68,6 +68,7 @@ const Footer = () => {
                     <Link to="/terms">Terms of Service</Link>
                     <Link to="/privacy">Privacy Policy</Link>
                     <Link to="/cookies">Cookie Preferences</Link>
+                    <Link to="/docs">Developer Docs</Link>
                     <a href="https://www.themoviedb.org/" target="_blank" rel="noopener noreferrer">TMDB</a>
                 </div>
 

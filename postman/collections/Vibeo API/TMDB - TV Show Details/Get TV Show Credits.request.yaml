@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get TV Show Credits
+method: GET
+url: '{{tmdb_base_url}}/tv/{{tv_id}}/credits'
+order: 2000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: language
+    value: en-US

@@ -1,0 +1,27 @@
+$kind: http-request
+method: POST
+url: 'https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3/v1/chat/completions'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Authorization
+    value: 'Bearer {{hf_api_key}}'
+body:
+  type: json
+  content: |-
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Vibey, the friendly AI movie & TV recommendation assistant for Vibeo."
+        },
+        {
+          "role": "user",
+          "content": "Recommend some great sci-fi movies"
+        }
+      ],
+      "temperature": 0.8,
+      "max_tokens": 800
+    }

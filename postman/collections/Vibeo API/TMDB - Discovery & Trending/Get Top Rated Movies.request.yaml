@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get Top Rated Movies
+method: GET
+url: '{{tmdb_base_url}}/movie/top_rated'
+order: 3000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: language
+    value: en-US

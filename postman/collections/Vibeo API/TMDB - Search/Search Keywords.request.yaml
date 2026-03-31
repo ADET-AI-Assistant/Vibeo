@@ -1,0 +1,11 @@
+$kind: http-request
+method: GET
+url: '{{tmdb_base_url}}/search/keyword'
+order: 3000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: query
+    value: space
+  - key: page
+    value: '1'

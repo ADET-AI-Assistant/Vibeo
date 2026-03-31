@@ -71,6 +71,7 @@ const SmartSearch = lazy(() => import('@/pages/SmartSearch'));
 const VibeyPage = lazy(() => import('@/pages/VibeyPage'));
 const ThemeStore = lazy(() => import('@/pages/ThemeStore'));
 const Library = lazy(() => import('@/pages/Library'));
+const DeveloperDocs = lazy(() => import('@/pages/Docs/DocsLayout'));
 
 /**
  * Premium Loading Fallback - Cinematic & Polished
@@ -247,6 +248,7 @@ const App = () => {
             <Route path="/watch/:id" element={<Watch />} />
             <Route path="/theme-store" element={<ThemeStore />} />
             <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
+            <Route path="/docs" element={<DeveloperDocs />} />
 
             {/* Play page – dedicated player */}
             <Route path="/play/:id" element={<Play />} />

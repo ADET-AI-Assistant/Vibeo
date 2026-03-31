@@ -1,0 +1,14 @@
+$kind: http-request
+name: Get Movie Collection
+method: GET
+url: "{{tmdb_base_url}}/collection/{{collection_id}}?api_key={{tmdb_api_key}}&l\
+  anguage=en-US&VITE_TMDB_API_KEY=05a3f3071ad3fa222ab689fb62ed0df1"
+auth:
+  type: apikey
+  credentials:
+    key: ""
+order: 1000
+queryParams:
+  api_key: "{{tmdb_api_key}}"
+  language: en-US
+  VITE_TMDB_API_KEY: 05a3f3071ad3fa222ab689fb62ed0df1

@@ -1,0 +1,10 @@
+$kind: http-request
+name: 'Get Trending Movies (Week)'
+method: GET
+url: '{{tmdb_base_url}}/trending/movie/week'
+order: 1000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: language
+    value: en-US

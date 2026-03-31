@@ -1,0 +1,10 @@
+$kind: http-request
+name: Get Movie Details
+method: GET
+url: '{{tmdb_base_url}}/movie/{{movie_id}}'
+order: 1000
+queryParams:
+  - key: api_key
+    value: '{{tmdb_api_key}}'
+  - key: language
+    value: en-US

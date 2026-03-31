@@ -1,0 +1,25 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/groq'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "model": "llama-3.3-70b-versatile",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Vibey, the friendly AI movie & TV recommendation assistant for Vibeo."
+        },
+        {
+          "role": "user",
+          "content": "Recommend some great sci-fi movies"
+        }
+      ],
+      "temperature": 0.8,
+      "max_tokens": 800
+    }

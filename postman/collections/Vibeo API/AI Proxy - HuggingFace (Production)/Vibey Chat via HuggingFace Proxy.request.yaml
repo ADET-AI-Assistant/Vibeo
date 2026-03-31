@@ -1,0 +1,25 @@
+$kind: http-request
+method: POST
+url: '{{base_url}}/api/huggingface'
+order: 1000
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "model": "mistralai/Mistral-7B-Instruct-v0.3",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are Vibey, the friendly AI movie & TV recommendation assistant for Vibeo."
+        },
+        {
+          "role": "user",
+          "content": "Recommend some great sci-fi movies"
+        }
+      ],
+      "temperature": 0.8,
+      "max_tokens": 800
+    }
