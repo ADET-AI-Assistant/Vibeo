@@ -137,13 +137,10 @@ export const UserMoviesProvider = ({ children }) => {
     useEffect(() => {
         if (!currentUser || loading) return;
 
-        // Perform initial sync as soon as data is ready from Firebase
-        syncToBackend();
-
-        // Also setup automatic sync that triggers on data changes
+        // Debounce sync to avoid spamming the backend
         const syncTimeout = setTimeout(() => {
             syncToBackend();
-        }, 10000); // 10s cooldown for background updates
+        }, 8000); // 8s debounce for data changes
 
         return () => clearTimeout(syncTimeout);
     }, [currentUser, loading, totalWatchTime, streakData]);

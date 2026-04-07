@@ -21,18 +21,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load .env file if it exists
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 
+# SECURITY WARNING: don't run with debug turned on in production!
+# Define DEBUG first — used in SECRET_KEY validation below.
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# Default to False for safety in cloud environments
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+if not SECRET_KEY and not DEBUG:
+    raise ValueError("SECRET_KEY environment variable is not set and DEBUG is False.")
+elif not SECRET_KEY:
+    # Fallback for local development only — never runs in production
+    SECRET_KEY = 'django-insecure-fallback-key-for-local-dev-only'
 
 ALLOWED_HOSTS = [
     '.vercel.app', 
     'localhost', 
     '127.0.0.1',
-    'vibeo-stream.vercel.app' # Explicitly added
+    'vibeo-stream.vercel.app',
+    'vibeo-stream.online',
+    'www.vibeo-stream.online'
 ]
 
 INSTALLED_APPS = [
@@ -154,7 +162,9 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True 
 CSRF_TRUSTED_ORIGINS = [
     'https://*.vercel.app',
-    'https://vibeo-stream.vercel.app'
+    'https://vibeo-stream.vercel.app',
+    'https://vibeo-stream.online',
+    'https://www.vibeo-stream.online'
 ]
 
 # Security Headers for Deployment
@@ -164,7 +174,8 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000 # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    SECURE_SSL_REDIRECT = True
+    # Vercel handles SSL at the edge. Internal Django SSL redirect can cause infinite loops.
+    SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     CSRF_COOKIE_HTTPONLY = True # Added for extra security against XSS

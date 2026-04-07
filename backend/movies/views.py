@@ -1,3 +1,5 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -102,27 +104,35 @@ class LeaderboardViewSet(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         # Order by total watch time (descending) and limit to top 50 for production performance
         return UserStat.objects.all().order_by('-total_watch_time')[:50]
-
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-
 @method_decorator(csrf_exempt, name='dispatch')
 class SyncStatsView(APIView):
-    permission_classes = (permissions.AllowAny,) # We use Firebase UID for internal identifying
+    permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
-        firebase_uid = request.data.get('firebase_uid')
-        if not firebase_uid:
-            return Response({'error': 'firebase_uid is required'}, status=status.HTTP_400_BAD_REQUEST)
-        
-        obj, created = UserStat.objects.update_or_create(
-            firebase_uid=firebase_uid,
-            defaults={
-                'username': request.data.get('username'),
-                'avatar_url': request.data.get('avatar_url'),
-                'total_watch_time': request.data.get('total_watch_time', 0),
-                'current_streak': request.data.get('current_streak', 0),
-                'highest_streak': request.data.get('highest_streak', 0),
-            }
-        )
-        return Response(UserStatSerializer(obj).data, status=status.HTTP_200_OK)
+        try:
+            firebase_uid = request.data.get('firebase_uid')
+            if not firebase_uid:
+                return Response({'error': 'firebase_uid is required'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Normalize inputs to ensure no 'None' values reach integer fields
+            username = request.data.get('username', 'Anonymous')
+            avatar_url = request.data.get('avatar_url', '')
+            total_watch_time = int(request.data.get('total_watch_time', 0) or 0)
+            current_streak = int(request.data.get('current_streak', 0) or 0)
+            highest_streak = int(request.data.get('highest_streak', 0) or 0)
+
+            obj, created = UserStat.objects.update_or_create(
+                firebase_uid=firebase_uid,
+                defaults={
+                    'username': username,
+                    'avatar_url': avatar_url,
+                    'total_watch_time': total_watch_time,
+                    'current_streak': current_streak,
+                    'highest_streak': highest_streak,
+                }
+            )
+            return Response(UserStatSerializer(obj).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc())
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

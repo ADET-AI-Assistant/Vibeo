@@ -1,3 +1,5 @@
+import React, { useState, useEffect } from 'react';
+import { fetchLeaderboard } from '@/api/djangoClient';
 import { Trophy, Flame, Play, ArrowLeft, RefreshCcw, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserMoviesContext } from '@/context/UserMoviesContext';
