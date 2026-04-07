@@ -199,6 +199,35 @@ const ArchitectureSection = () => {
                 </div>
             </div>
 
+            {/* FLOW 5: Hybrid SQL Sync */}
+            <div style={{
+                background: 'var(--c-bg)',
+                borderRadius: '24px',
+                padding: '40px',
+                border: '1px solid var(--c-surface2)',
+                position: 'relative',
+                overflow: 'hidden',
+                marginTop: '24px'
+            }}>
+                <h3 style={{ color: 'var(--c-text)', marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Database size={24} color="#f38ba8" />
+                    Hybrid SQL Sync Flow (Compliance & Leaderboard)
+                </h3>
+                
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                    <FlowNode icon={Layout} title="Vibeo Client" desc="Local User Progress (Streaks/Watch Time)" color="137, 180, 250" delay={0.1} pulse={true} />
+                    <FlowPath color="203, 166, 247" active={true} delay={0.3} />
+                    
+                    <FlowNode icon={Server} title="Django API" desc="Debounced Sync (3s) to Vercel/Python" color="203, 166, 247" delay={0.5} />
+                    <FlowPath color="243, 139, 168" active={true} delay={0.7} />
+                    
+                    <FlowNode icon={Database} title="Neon Postgres" desc="Relational DB for Global Rankings" color="243, 139, 168" pulse={true} delay={0.9} />
+                    <FlowPath color="166, 227, 161" active={true} delay={1.1} />
+                    
+                    <FlowNode icon={Layout} title="Leaderboard" desc="Global Ranked UI fetched via SQL" color="166, 227, 161" delay={1.3} />
+                </div>
+            </div>
+
             <style>{`
                 @keyframes nodePop {
                     0% { opacity: 0; transform: scale(0.8); }
