@@ -103,14 +103,45 @@ const DatabaseSection = () => {
             />
 
             <SchemaCard
-                title="Theme Settings Sub-collection"
                 icon={Palette}
+                title="Theme Settings Sub-collection"
                 description="Persists user UI preferences globally: /users/{uid}/settings/theme."
                 documentShape={JSON.stringify({
                     "mode": "dark",
                     "accentColor": "#cba6f7",
                     "reducedMotion": false,
                     "updatedAt": "Timestamp(March 31, 2026 at 2:15:00 PM UTC+8)"
+                }, null, 2)}
+            />
+
+            <div style={{ marginTop: '80px', marginBottom: '40px' }}>
+                <h2 style={{ fontSize: '2.5rem', color: 'var(--c-text)', marginBottom: '16px', fontWeight: 800 }}>Relational Data (SQL)</h2>
+                <p style={{ color: 'var(--c-text2)', fontSize: '1.1rem', maxWidth: '800px', lineHeight: '1.6' }}>
+                    For global features like the <strong>Leaderboard</strong> and <strong>Compliance Tracking</strong>, Vibeo uses a relational <strong>PostgreSQL</strong> database hosted on Neon. This allows for complex aggregations and cross-user queries that are inefficient in NoSQL.
+                </p>
+                <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f38ba8', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(243, 139, 168, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                        <Database size={16} /> PostgreSQL / Neon
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cba6f7', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(203, 166, 247, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                        <LayoutList size={16} /> Relational Schema
+                    </div>
+                </div>
+            </div>
+
+            <SchemaCard
+                title="UserStat Table"
+                icon={Database}
+                description="Stores aggregated user progress for global rankings. Synced from Firebase."
+                documentShape={JSON.stringify({
+                    "id": 1,
+                    "firebase_uid": "Pm1WLcJLZ3aHkXO53BefELh3YAB3",
+                    "username": "John Lemar Gonzales",
+                    "avatar_url": "https://lh3.googleusercontent.com/...",
+                    "total_watch_time": 93570,
+                    "current_streak": 5,
+                    "highest_streak": 12,
+                    "last_synced": "2026-04-07T09:44:30Z"
                 }, null, 2)}
             />
 
