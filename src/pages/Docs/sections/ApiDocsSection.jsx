@@ -269,6 +269,32 @@ const ApiDocsSection = () => {
         }
     };
 
+    // Handler for Django Leaderboard
+    const fetchLeaderboard = async () => {
+        const res = await fetch('/api/leaderboard/');
+        if (!res.ok) throw new Error("Leaderboard fetch failed");
+        return await res.json();
+    };
+
+    // Handler for Django Sync Stats
+    const syncStats = async () => {
+        const body = {
+            firebase_uid: "test_uid_docs",
+            username: "Docs Tester",
+            avatar_url: "https://lh3.googleusercontent.com/...",
+            total_watch_time: 12345,
+            current_streak: 3,
+            highest_streak: 5
+        };
+        const res = await fetch('/api/sync-stats/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) throw new Error("Sync failed");
+        return await res.json();
+    };
+
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px' }}>
@@ -283,6 +309,29 @@ const ApiDocsSection = () => {
             </div>
 
             <AuthStatusCard />
+
+            <ApiTesterCard 
+                title="Global Leaderboard — SQL Aggregate"
+                method="GET"
+                endpoint="/api/leaderboard"
+                description="Fetches the top 50 users ranked by watch time or streaks. This hits the Django backend which queries the Neon PostgreSQL database."
+                apiCallHandler={fetchLeaderboard}
+            />
+
+            <ApiTesterCard 
+                title="User Stats Sync — Hybrid Bridge"
+                method="POST"
+                endpoint="/api/sync-stats"
+                description="Synchronizes local Firebase state to the relational database. This is used to build the global leaderboard without querying Firestore directly for every ranking."
+                demoBody={JSON.stringify({
+                    firebase_uid: "Pm1WLcJLZ3aHkXO53BefELh3YAB3",
+                    username: "John Lemar",
+                    total_watch_time: 95000,
+                    current_streak: 5,
+                    highest_streak: 10
+                }, null, 2)}
+                apiCallHandler={syncStats}
+            />
 
             <ApiTesterCard 
                 title="Vercel Serverless Function — Groq Integration"
