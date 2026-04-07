@@ -1,7 +1,6 @@
 Django>=5.0
 djangorestframework>=3.14
 django-cors-headers>=4.0
-vercel-wsgi>=2.0
 psycopg2-binary>=2.9
 dj-database-url>=2.1
 python-dotenv>=1.0
