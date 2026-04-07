@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from 'r
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
+import { syncUserStats } from '@/api/djangoClient';
 import { triggerError } from '@/components/common/ErrorToast';
 
 const UserMoviesContext = createContext();
@@ -111,6 +112,24 @@ export const UserMoviesProvider = ({ children }) => {
 
         return () => unsubscribe();
     }, [currentUser]);
+
+    // BACKGROUND SYNC TO DJANGO (Leaderboard & Compliance)
+    useEffect(() => {
+        if (!currentUser || loading) return;
+
+        const syncTimeout = setTimeout(() => {
+            syncUserStats({
+                uid: currentUser.uid,
+                displayName: currentUser.displayName,
+                email: currentUser.email,
+                photoURL: currentUser.photoURL,
+                totalWatchTime,
+                streakData
+            });
+        }, 3000); // Debounce sync to avoid spamming
+
+        return () => clearTimeout(syncTimeout);
+    }, [currentUser, loading, totalWatchTime, streakData]);
 
     // Helper functions (copied and adapted from the former hook)
 
