@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signInWithPopup, signOut, updateProfile } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, provider, db } from '../firebase';
 
@@ -25,6 +25,18 @@ export const AuthProvider = ({ children }) => {
         return signOut(auth);
     };
 
+    // Update user profile (username, avatar)
+    const updateUserProfile = async (displayName, photoURL) => {
+        if (!auth.currentUser) return;
+        
+        await updateProfile(auth.currentUser, {
+            displayName: displayName,
+            photoURL: photoURL
+        });
+        
+        // Force state un-thawing to trigger re-renders natively with the new auth reference
+        setCurrentUser({ ...auth.currentUser }); 
+    };
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -58,7 +70,8 @@ export const AuthProvider = ({ children }) => {
         loading,
         isOnboarded,
         loginWithGoogle,
-        logout
+        logout,
+        updateUserProfile
     }), [currentUser, loading, isOnboarded]);
 
     return (

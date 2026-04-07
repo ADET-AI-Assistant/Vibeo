@@ -44,6 +44,27 @@
     -webkit-text-fill-color: transparent;
 }
 
+.edit-profile-action-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--c-muted);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-profile-action-btn:hover {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+}
+
 .hub-greeting p {
     color: var(--c-muted);
     font-size: 0.95rem;

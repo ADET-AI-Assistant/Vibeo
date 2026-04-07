@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { User, Activity, PieChart } from 'lucide-react';
+import { User, Activity, PieChart, Edit3 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import MovieCard from '@/components/common/MovieCard';
 import ProfileStreak from '@/components/common/ProfileStreak';
@@ -8,6 +8,7 @@ import { useUserMoviesContext } from '@/context/UserMoviesContext';
 import { useNavigate } from 'react-router-dom';
 import { formatWatchTime } from '@/utils/timeUtils';
 import VibeStats from '@/components/common/VibeStats';
+import EditProfileModal from '@/components/profile/EditProfileModal';
 import './styles.css';
 
 const Profile = () => {
@@ -15,33 +16,12 @@ const Profile = () => {
     const { watchlist, favoriteMovies, totalWatchTime, loading } = useUserMoviesContext();
     const navigate = useNavigate();
     const menuRef = useRef(null);
-
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     // Get backdrop from the first watchlist item that has one
     const heroBackdrop = watchlist.find(m => m.backdrop_path)?.backdrop_path;
 
-    // Close managing menu on Escape key or outside click
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') setManagingId(null);
-        };
-
-        const handleClickOutside = (e) => {
-            if (menuRef.current && !menuRef.current.contains(e.target)) {
-                setManagingId(null);
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
     if (loading) return <div className="profile-loading"><div className="loader"></div></div>;
-
 
     return (
         <div className="page-wrapper">
@@ -68,8 +48,10 @@ const Profile = () => {
                                         />
                                     </div>
                                     <div className="hub-greeting">
-                                        <h1>Hi, <span className="hub-name">{currentUser?.displayName?.split(' ')[0] || 'User'}</span></h1>
-                                        <p>Welcome back to your hub</p>
+                                        <h1>Hi, <span className="hub-name">{currentUser?.displayName || 'User'}</span></h1>
+                                        <button className="edit-profile-action-btn" onClick={() => setIsEditModalOpen(true)}>
+                                            <Edit3 size={14} /> Edit Profile
+                                        </button>
                                     </div>
 
                                     <div className="hub-quick-stats">
@@ -110,6 +92,11 @@ const Profile = () => {
                 <div className="profile-dashboard">
                 </div>
             </main>
+
+            <EditProfileModal 
+                isOpen={isEditModalOpen} 
+                onClose={() => setIsEditModalOpen(false)} 
+            />
         </div>
     );
 };
