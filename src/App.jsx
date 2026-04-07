@@ -72,6 +72,7 @@ const VibeyPage = lazy(() => import('@/pages/VibeyPage'));
 const ThemeStore = lazy(() => import('@/pages/ThemeStore'));
 const Library = lazy(() => import('@/pages/Library'));
 const DeveloperDocs = lazy(() => import('@/pages/Docs/DocsLayout'));
+const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
 
 /**
  * Premium Loading Fallback - Cinematic & Polished
@@ -249,6 +250,7 @@ const App = () => {
             <Route path="/theme-store" element={<ThemeStore />} />
             <Route path="/library" element={<ProtectedRoute><Library /></ProtectedRoute>} />
             <Route path="/docs" element={<DeveloperDocs />} />
+            <Route path="/leaderboard" element={<Leaderboard />} />
 
             {/* Play page – dedicated player */}
             <Route path="/play/:id" element={<Play />} />
