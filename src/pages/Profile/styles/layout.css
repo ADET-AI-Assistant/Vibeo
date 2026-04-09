@@ -38,7 +38,7 @@
     }
 }
 
-@keyframes fadeIn {
+@keyframes profileFadeIn {
     from {
         opacity: 0;
         transform: translateY(5px);
