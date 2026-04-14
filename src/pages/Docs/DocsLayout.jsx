@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Book, Server, Network, Shield, ChevronRight } from 'lucide-react';
+import { Book, Network, Server, Shield, ChevronRight } from 'lucide-react';
 import OverviewSection from './sections/OverviewSection';
 import ArchitectureSection from './sections/ArchitectureSection';
-import ApiDocsSection from './sections/ApiDocsSection';
 import DatabaseSection from './sections/DatabaseSection';
+import ApiDocsSection from './sections/ApiDocsSection';
 import EnvironmentSection from './sections/EnvironmentSection';
 import ComponentsSection from './sections/ComponentsSection';
+import './docs.css';
 
 const DocsLayout = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -26,45 +27,11 @@ const DocsLayout = () => {
   ];
 
   return (
-    <div className="docs-container" style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      color: 'var(--c-text)',
-      paddingTop: '80px', // header offset
-      background: 'var(--c-bg)'
-    }}>
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        maxWidth: '1400px',
-        margin: '0 auto',
-        width: '100%',
-        padding: '0 20px',
-        gap: '40px'
-      }}>
+    <div className="docs-page-wrapper">
+      <div className="docs-inner-container">
         {/* Sidebar */}
-        <nav style={{
-          width: '280px',
-          flexShrink: 0,
-          borderRight: '1px solid var(--c-surface2)',
-          paddingTop: '20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          position: 'sticky',
-          top: '100px',
-          height: 'fit-content'
-        }}>
-          <h2 style={{
-            fontSize: '0.9rem',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-            color: 'var(--c-text2)',
-            marginBottom: '10px',
-            fontWeight: 700,
-            paddingLeft: '12px'
-          }}>
+        <nav className="docs-sidebar">
+          <h2 className="docs-nav-title">
             Developer Docs
           </h2>
 
@@ -75,46 +42,21 @@ const DocsLayout = () => {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '12px',
-                  borderRadius: '12px',
-                  background: isActive ? 'var(--c-accent)' : 'transparent',
-                  color: isActive ? 'white' : 'var(--c-text)',
-                  border: 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  textAlign: 'left',
-                  fontWeight: isActive ? 600 : 500,
-                }}
+                className={`docs-tab-btn ${isActive ? 'active' : ''}`}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <Icon size={18} style={{ opacity: isActive ? 1 : 0.7 }} />
                   {tab.label}
                 </div>
-                {isActive && <ChevronRight size={16} />}
+                <ChevronRight size={16} className="chevron" style={{ opacity: isActive ? 1 : 0, transition: 'opacity 0.2s' }} />
               </button>
             );
           })}
         </nav>
 
         {/* Main Content Area */}
-        <main style={{
-          flex: 1,
-          paddingTop: '20px',
-          paddingBottom: '100px',
-          overflow: 'hidden'
-        }}>
-          <div style={{
-            background: 'var(--c-surface)',
-            borderRadius: '24px',
-            padding: '40px',
-            minHeight: '80vh',
-            boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-            border: '1px solid var(--c-surface2)'
-          }}>
+        <main className="docs-content-main">
+          <div className="docs-section-card">
             {activeTab === 'overview' && <OverviewSection />}
             {activeTab === 'architecture' && <ArchitectureSection />}
             {activeTab === 'database' && <DatabaseSection />}
@@ -124,7 +66,6 @@ const DocsLayout = () => {
           </div>
         </main>
       </div>
-
     </div>
   );
 };
