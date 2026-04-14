@@ -18,7 +18,7 @@
     gap: 1.25rem;
 }
 
-/* ── Card wrapper — disable MovieCard hover in browse context ── */
+/* ── Card wrapper — keeping it clean ── */
 .browse-card-wrap {
     cursor: pointer;
     border-radius: 8px;
@@ -37,16 +37,6 @@
 
 .browse-card-wrap .mc__poster-wrap {
     aspect-ratio: 2 / 3;
-}
-
-/* Disable the scale-on-hover from MovieCard */
-.browse-card-wrap .mc--hovered {
-    transform: none !important;
-    z-index: auto !important;
-}
-
-.browse-card-wrap .mc__overlay {
-    display: none !important;
 }
 
 /* Selected card border */
@@ -71,7 +61,7 @@
         transform: scale(1.05) !important;
     }
 
-    .browse-card-wrap .mc__overlay {
+    .browse-card-wrap .mc__details-panel {
         display: flex !important;
     }
 }
