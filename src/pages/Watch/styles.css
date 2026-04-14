@@ -316,7 +316,7 @@
 @media (max-width: 768px) {
     .detail-hero {
         min-height: auto;
-        padding-bottom: 2rem;
+        padding-bottom: 4rem; /* More space for bottom nav */
     }
 
     .detail-hero__backdrop img {
@@ -376,8 +376,9 @@
     .detail-actions {
         flex-direction: column;
         width: 100%;
-        max-width: 320px;
-        gap: 0.75rem;
+        max-width: 360px; /* Slightly wider for better balance */
+        gap: 0.85rem;
+        margin: 1.5rem auto 0;
     }
 
     .detail-play-btn,
