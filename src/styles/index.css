@@ -293,3 +293,19 @@ img {
     gap: 1.25rem;
   }
 }
+
+/* Cinematic Loading Screen Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(-20px); }
+  50% { transform: translateY(-30px); }
+}
+
+@keyframes pulse-text {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes loading-bar {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
