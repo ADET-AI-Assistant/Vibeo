@@ -36,7 +36,7 @@ const CollectionGrid = ({ collectionId }) => {
                 {/* ── Background Layer ── */}
                 {backdropUrl && (
                     <div className="collection-backdrop">
-                        <img src={backdropUrl} alt="" aria-hidden="true" />
+                        <img src={backdropUrl} alt="" aria-hidden="true" loading="lazy" />
                         <div className="collection-backdrop-fade" />
                     </div>
                 )}
