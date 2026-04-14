@@ -3,7 +3,7 @@
  * Handles connection to the local Django backend for leaderboard and compliance features.
  */
 
-const BASE_URL = '/api';
+const BASE_URL = '/api/v1';
 
 /**
  * Sync user stats to the Django backend
