@@ -37,7 +37,7 @@ const Search = () => {
 
             try {
                 const data = await fetchTMDB('/search/multi', {
-                    query: encodeURIComponent(query),
+                    query: query,
                     include_adult: false,
                     page: 1
                 });
