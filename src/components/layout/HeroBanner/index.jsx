@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import MovieLogo from '../../common/MovieLogo';
 import HeroSlide from './HeroSlide';
 import TrailerPlayer from './TrailerPlayer';
+import TrailerModal from '../../common/TrailerModal';
 import { useTrailers } from '../../../hooks/useTrailers';
 import { useLayout } from '../../../context/LayoutContext';
 import './styles.css';
@@ -15,9 +16,11 @@ const HeroBanner = ({ movies = [] }) => {
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [trailerReady, setTrailerReady] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Custom hook for fetching trailers
-    const { trailerKeys } = useTrailers(movies, activeIndex);
+    // Custom hook for fetching trailers - only for the visible 5 items
+    const visibleMovies = movies.slice(0, 5);
+    const { trailerKeys } = useTrailers(visibleMovies, activeIndex);
 
     /* ── Start/stop auto-advance ── */
     const startAutoAdvance = useCallback(() => {
@@ -48,12 +51,14 @@ const HeroBanner = ({ movies = [] }) => {
         return () => stopAutoAdvance();
     }, [startAutoAdvance, stopAutoAdvance]);
 
-    /* ── When trailer starts playing, pause auto-advance ── */
+    /* ── When trailer starts playing or modal is open, pause auto-advance ── */
     useEffect(() => {
-        if (trailerReady) {
+        if (trailerReady || isModalOpen) {
             stopAutoAdvance();
+        } else {
+            startAutoAdvance();
         }
-    }, [trailerReady, stopAutoAdvance]);
+    }, [trailerReady, isModalOpen, startAutoAdvance, stopAutoAdvance]);
 
     /* ── Reset trailer ready state on slide change ── */
     useEffect(() => {
@@ -147,20 +152,40 @@ const HeroBanner = ({ movies = [] }) => {
                 )}
 
                 <div className="hero-actions">
-                    <button
-                        className="hero-btn-primary hero-btn-watch"
-                        onClick={() => navigate(`/watch/${movies[activeIndex].id}`)}
-                    >
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <polygon points="5,3 19,12 5,21" />
-                        </svg>
-                        Watch Now
-                    </button>
+                    {(() => {
+                        const releaseDate = movies[activeIndex].release_date || movies[activeIndex].first_air_date;
+                        const isUnreleased = releaseDate && releaseDate > new Date().toISOString().split('T')[0];
+                        
+                        if (isUnreleased) {
+                            return (
+                                <button
+                                    className="hero-btn-primary hero-btn-watch"
+                                    disabled
+                                    style={{ background: 'rgba(255,255,255,0.1)', color: '#a0aec0', cursor: 'not-allowed', boxShadow: 'none' }}
+                                >
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                    Unreleased
+                                </button>
+                            );
+                        }
+                        
+                        return (
+                            <button
+                                className="hero-btn-primary hero-btn-watch"
+                                onClick={() => navigate(`/watch/${movies[activeIndex].id}`)}
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5,3 19,12 5,21" />
+                                </svg>
+                                Watch Now
+                            </button>
+                        );
+                    })()}
 
                     {currentTrailerKey && (
                         <button
                             className="hero-btn-secondary hero-btn-trailer"
-                            onClick={() => setTrailerReady(true)}
+                            onClick={() => setIsModalOpen(true)}
                             style={{ gap: '10px' }}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
@@ -221,6 +246,11 @@ const HeroBanner = ({ movies = [] }) => {
                 ))}
             </div>
 
+            <TrailerModal
+                isOpen={isModalOpen}
+                videoId={currentTrailerKey}
+                onClose={() => setIsModalOpen(false)}
+            />
         </section>
     );
 };
