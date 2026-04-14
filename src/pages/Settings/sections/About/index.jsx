@@ -2,18 +2,41 @@ import React from 'react';
 import {
     Info, Star, Github, ExternalLink,
     MessageSquareWarning, ArrowUpRight,
-    ListTree, Sparkles
+    ListTree, Sparkles, Terminal
 } from 'lucide-react';
+import { useLayout } from '@/context/LayoutContext';
 import './styles.css';
 
 const AboutSection = () => {
+    const { devMode, setDevMode } = useLayout();
+    const [clicks, setClicks] = React.useState(0);
+    const [showToast, setShowToast] = React.useState(false);
+
+    const handleLogoClick = () => {
+        const newClicks = clicks + 1;
+        setClicks(newClicks);
+
+        if (newClicks >= 5) {
+            setDevMode(!devMode);
+            setClicks(0);
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
+        }
+    };
+
     return (
         <div className="settings-section animate-fade-in about-section">
+            {showToast && (
+                <div className="dev-unlock-toast">
+                    <Terminal size={18} />
+                    <span>{devMode ? 'Developer mode enabled!' : 'Developer mode disabled!'}</span>
+                </div>
+            )}
             <h2><span className="icon"><Info size={20} /></span> About</h2>
 
             {/* Hero Card */}
             <div className="about-hero-card">
-                <div className="about-logo-icon">
+                <div className="about-logo-icon" onClick={handleLogoClick} title="Vibeo Logo">
                     <img src="/vibeo.png" alt="Vibeo Logo" className="vibeo-logo-img" />
                 </div>
                 <h3>Vibeo</h3>
