@@ -269,6 +269,20 @@ img {
 }
 
 /* ================================================================
+   TYPOGRAPHY UTILITIES
+   ================================================================ */
+.section-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--c-text);
+  margin-bottom: 1.25rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid var(--c-accent);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* ================================================================
    ROWS CONTAINER
    ================================================================ */
 .rows-container {

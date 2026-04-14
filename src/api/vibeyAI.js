@@ -30,13 +30,12 @@ const aiCache = new Map();
 const MAX_AI_CACHE_SIZE = 50;
 
 /**
- * Generate a semi-unique string key for conversation history
+ * Generate a unique string key for conversation history
  */
 const getHistoryKey = (history) => {
     if (!history || history.length === 0) return 'empty';
-    const lastMessage = history[history.length - 1];
-    // Key based on last message + depth of conversation for contextual cache hits
-    return `len:${history.length}|last:${lastMessage.role}:${lastMessage.content}`;
+    // Use the entire history for a robust cache key to avoid collisions
+    return JSON.stringify(history.map(m => ({ role: m.role, content: m.content })));
 };
 
 /**

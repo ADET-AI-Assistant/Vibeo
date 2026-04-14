@@ -2,6 +2,25 @@
    HERO BANNER — Trailer & Skeleton Overlays
    ================================================================ */
 
+.hero-trailer-container {
+    position: absolute;
+    inset: 0;
+    z-index: 5; /* Above backdrop images (0) and gradients (1) */
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #000;
+}
+
+.hero-trailer-container.visible {
+    opacity: 1;
+}
+
+.hero-trailer-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* ── Hero Trailer Overlay ── */
 .hero-trailer-wrap {
     position: absolute;

@@ -30,6 +30,7 @@ const Play = () => {
     const [title, setTitle] = useState('Loading...');
     const [playerReady, setPlayerReady] = useState(false);
     const [playerError, setPlayerError] = useState(false);
+    const [isUnreleasedTitle, setIsUnreleasedTitle] = useState(false);
     const [showSlowWarning, setShowSlowWarning] = useState(false);
     const slowTimer = useRef(null);
     const { addToContinueWatching, addWatchTime } = useUserMovies();
@@ -59,6 +60,15 @@ const Play = () => {
         }
         fetchTMDB(`/${type}/${id}`).then(data => {
             if (data) {
+                const releaseDate = data.release_date || data.first_air_date;
+                const isUnreleased = releaseDate && releaseDate > new Date().toISOString().split('T')[0];
+                
+                if (isUnreleased) {
+                    setIsUnreleasedTitle(true);
+                    setPlayerError(true);
+                    setPlayerReady(true);
+                }
+
                 const t = data.title || data.name;
                 setTitle(t);
                 addToContinueWatching(data);
@@ -228,24 +238,37 @@ const Play = () => {
                         {/* Error fallback */}
                         {playerError && (
                             <div className="play-player-error">
-                                <p style={{ color: 'var(--c-text)', fontWeight: 700, fontSize: '1.1rem' }}>Stream failed to load</p>
-                                <p style={{ color: 'var(--c-muted)', fontSize: '0.85rem', textAlign: 'center', maxWidth: 360 }}>
-                                    {provider.label} couldn't serve this title right now.
-                                </p>
+                                {isUnreleasedTitle ? (
+                                    <>
+                                        <p style={{ color: 'var(--c-text)', fontWeight: 700, fontSize: '1.2rem', marginBottom: '8px' }}>Not Yet Released</p>
+                                        <p style={{ color: 'var(--c-muted)', fontSize: '0.9rem', textAlign: 'center', maxWidth: 360 }}>
+                                            This title has not been released yet. Please check back after its official release date.
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p style={{ color: 'var(--c-text)', fontWeight: 700, fontSize: '1.1rem', marginBottom: '8px' }}>Stream failed to load</p>
+                                        <p style={{ color: 'var(--c-muted)', fontSize: '0.85rem', textAlign: 'center', maxWidth: 360 }}>
+                                            {provider.label} couldn't serve this title right now.
+                                        </p>
+                                    </>
+                                )}
                             </div>
                         )}
 
-                        <iframe
-                            key={embedUrl}
-                            src={embedUrl}
-                            title={isTV ? `${title} S${activeSeason}E${activeEpisode}` : `Watch ${title}`}
-                            allow="autoplay; fullscreen; picture-in-picture; encrypted-media; web-share"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            scrolling="no"
-                            onLoad={handleLoad}
-                            onError={() => { setPlayerError(true); setPlayerReady(true); }}
-                            className={`play-iframe ${playerReady ? 'play-iframe--ready' : ''}`}
-                        />
+                        {!isUnreleasedTitle && (
+                            <iframe
+                                key={embedUrl}
+                                src={embedUrl}
+                                title={isTV ? `${title} S${activeSeason}E${activeEpisode}` : `Watch ${title}`}
+                                allow="autoplay; fullscreen; picture-in-picture; encrypted-media; web-share"
+                                referrerPolicy="no-referrer-when-downgrade"
+                                scrolling="no"
+                                onLoad={handleLoad}
+                                onError={() => { setPlayerError(true); setPlayerReady(true); }}
+                                className={`play-iframe ${playerReady ? 'play-iframe--ready' : ''}`}
+                            />
+                        )}
                     </div>
                 </section>
 

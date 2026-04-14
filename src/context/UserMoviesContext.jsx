@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
-import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDoc, runTransaction } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
 import { syncUserStats } from '@/api/djangoClient';
@@ -182,11 +182,18 @@ export const UserMoviesProvider = ({ children }) => {
         if (!currentUser) return false;
         try {
             const userRef = doc(db, 'users', currentUser.uid);
-            const newList = watchlist.filter(m => m.id !== Number(movie.id));
+            
+            // USE TRANSACTION FOR ATOMICITY
+            await runTransaction(db, async (transaction) => {
+                const docSnap = await transaction.get(userRef);
+                if (!docSnap.exists()) return;
 
-            await updateDoc(userRef, {
-                watchlist: newList
+                const currentWatchlist = docSnap.data().watchlist || [];
+                const newList = currentWatchlist.filter(m => Number(m.id) !== Number(movie.id));
+                
+                transaction.update(userRef, { watchlist: newList });
             });
+            
             return true;
         } catch (error) {
             console.error("Error removing from watchlist:", error);
@@ -208,29 +215,42 @@ export const UserMoviesProvider = ({ children }) => {
         if (!currentUser) return false;
         try {
             const userRef = doc(db, 'users', currentUser.uid);
-            const currentList = watchlist || [];
-            const movieIndex = currentList.findIndex(m => m.id === Number(movie.id));
+            
+            await runTransaction(db, async (transaction) => {
+                const docSnap = await transaction.get(userRef);
+                if (!docSnap.exists()) return;
 
-            if (movieIndex === -1) {
-                return await addToWatchlist(movie, newStatus);
-            }
+                const currentList = docSnap.data().watchlist || [];
+                const movieIndex = currentList.findIndex(m => Number(m.id) === Number(movie.id));
 
-            // Already has the status? Success.
-            if (currentList[movieIndex].status === newStatus) return true;
+                if (movieIndex === -1) {
+                    // Logic for adding new from here is tricky in transaction context,
+                    // but we can just use arrayUnion for add and handled it separately if needed.
+                    // For status updates, we expect it to exist or we add it.
+                    const movieWithStatus = {
+                        ...movie,
+                        id: Number(movie.id),
+                        status: newStatus,
+                        media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
+                        genre_ids: movie.genre_ids || [],
+                        addedAt: Date.now(),
+                        updatedAt: Date.now()
+                    };
+                    transaction.update(userRef, { watchlist: arrayUnion(movieWithStatus) });
+                } else {
+                    if (currentList[movieIndex].status === newStatus) return;
 
-            // Update status in a copy of the list
-            const newList = [...currentList];
-            newList[movieIndex] = {
-                ...newList[movieIndex],
-                status: newStatus,
-                updatedAt: Date.now()
-            };
-
-            await updateDoc(userRef, {
-                watchlist: newList
+                    const newList = [...currentList];
+                    newList[movieIndex] = {
+                        ...newList[movieIndex],
+                        status: newStatus,
+                        updatedAt: Date.now()
+                    };
+                    transaction.update(userRef, { watchlist: newList });
+                }
             });
 
-            // Record Activity (points system)
+            // Record Activity (points system) - Note: This is outside transaction but okay as it's separate document field
             if (newStatus === 'completed') {
                 recordActivity(3);
             } else {

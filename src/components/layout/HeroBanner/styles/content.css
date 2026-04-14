@@ -5,7 +5,7 @@
 /* Content layer — sits above the track, animates in on slide change */
 .hero-content {
     position: relative;
-    z-index: 10;
+    z-index: 20; /* High z-index to stay above trailers (5) and overlays */
     width: 100%;
     max-width: 560px;
     padding: 3rem 1.5rem 3.5rem 2rem;

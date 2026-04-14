@@ -1,4 +1,33 @@
+const rateLimitMap = new Map();
+const MAX_CACHE_SIZE = 1000;
+const WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS = 20;
+
 export default async function handler(req, res) {
+    // Basic rate limiting
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'anonymous';
+    const now = Date.now();
+    const limitData = rateLimitMap.get(ip);
+
+    if (!limitData) {
+        if (rateLimitMap.size >= MAX_CACHE_SIZE) {
+            const oldestKey = rateLimitMap.keys().next().value;
+            rateLimitMap.delete(oldestKey);
+        }
+        rateLimitMap.set(ip, { count: 1, lastReset: now });
+    } else {
+        if (now - limitData.lastReset > WINDOW_MS) {
+            limitData.count = 1;
+            limitData.lastReset = now;
+        } else {
+            limitData.count++;
+        }
+
+        if (limitData.count > MAX_REQUESTS) {
+            return res.status(429).json({ error: 'Too many requests. Please slow down!' });
+        }
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
     }

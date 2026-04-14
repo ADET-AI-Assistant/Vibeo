@@ -38,11 +38,12 @@ const Watch = () => {
 
     // Defer trailer iframe for performance
     useEffect(() => {
+        setShowTrailer(false);
         const timer = setTimeout(() => {
             setShowTrailer(true);
         }, 2000);
         return () => clearTimeout(timer);
-    }, [id]);
+    }, [id, type]);
 
     if (error) {
         return (
@@ -86,6 +87,9 @@ const Watch = () => {
     const posterUrl = movieMeta?.poster_path ? `${TMDB_IMAGE_BASE}${movieMeta.poster_path}` : null;
     const rating = movieMeta?.vote_average ? Number(movieMeta.vote_average).toFixed(1) : null;
     const certification = movieMeta?.certification || (movieMeta?.adult ? 'R' : 'PG-13');
+
+    const today = new Date().toISOString().split('T')[0];
+    const isUnreleased = releaseDate && releaseDate > today;
 
     return (
         <div className="page-wrapper">
@@ -187,12 +191,19 @@ const Watch = () => {
 
                                 {/* Actions */}
                                 <div className="detail-actions">
-                                    <button className="detail-play-btn" onClick={() => navigate(`/play/${id}?type=${type}`)}>
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                            <polygon points="5 3 19 12 5 21 5 3" />
-                                        </svg>
-                                        Play
-                                    </button>
+                                    {isUnreleased ? (
+                                        <button className="detail-play-btn" disabled style={{ background: 'rgba(255, 255, 255, 0.1)', cursor: 'not-allowed', color: 'var(--c-muted)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                            Unreleased
+                                        </button>
+                                    ) : (
+                                        <button className="detail-play-btn" onClick={() => navigate(`/play/${id}?type=${type}`)}>
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                                                <polygon points="5 3 19 12 5 21 5 3" />
+                                            </svg>
+                                            Play
+                                        </button>
+                                    )}
 
                                     {movieMeta?.trailerKey && (
                                         <button
