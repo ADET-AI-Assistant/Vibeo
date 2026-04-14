@@ -5,9 +5,11 @@ import LayoutSection from './sections/Layout';
 import DataSection from './sections/Data';
 import AboutSection from './sections/About';
 import DevToolsSection from './sections/DevTools';
+import { useLayout } from '@/context/LayoutContext';
 import './styles.css';
 
 const Settings = () => {
+    const { devMode } = useLayout();
     const [activeTab, setActiveTab] = useState('appearance');
 
     const renderContent = () => {
@@ -58,13 +60,14 @@ const Settings = () => {
 };
 
 const TabItems = ({ activeTab, setActiveTab, isMobile }) => {
+    const { devMode } = useLayout();
     const tabs = [
         { id: 'appearance', label: 'Appearance', sub: 'Theme & visual settings', icon: Palette },
         { id: 'layout', label: 'Layout', sub: 'Grid & card preferences', icon: Layout },
         { id: 'data', label: 'Data & Import', sub: 'Export, import, cleanup', icon: Database },
         { id: 'about', label: 'About', sub: 'Version & developer info', icon: Info },
         { id: 'dev', label: 'Dev Mode', sub: 'Testing utilities', icon: Terminal, color: '#ef4444' }
-    ];
+    ].filter(tab => tab.id !== 'dev' || devMode);
 
     return (
         <>
