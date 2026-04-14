@@ -41,15 +41,15 @@ const DatabaseSection = () => {
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
             <div style={{ marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '2.5rem', color: 'var(--c-text)', marginBottom: '16px', fontWeight: 800 }}>Database Schema</h2>
-                <p style={{ color: 'var(--c-text2)', fontSize: '1.1rem', maxWidth: '800px', lineHeight: '1.6' }}>
+                <h2 className="docs-heading">Database Schema</h2>
+                <p className="docs-subheading">
                     Vibeo utilizes a NoSQL document database Architecture via <strong>Firebase Firestore</strong>. Instead of rigid SQL tables, data is stored in flexible Collections and Documents.
                 </p>
-                <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#89b4fa', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(137, 180, 250, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#89b4fa', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(137, 180, 250, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
                         <Database size={16} /> NoSQL Structure
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f9e2af', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(249, 226, 175, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f9e2af', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(249, 226, 175, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
                         <Fingerprint size={16} /> Data Scoped via Auth UID
                     </div>
                 </div>
@@ -115,15 +115,15 @@ const DatabaseSection = () => {
             />
 
             <div style={{ marginTop: '80px', marginBottom: '40px' }}>
-                <h2 style={{ fontSize: '2.5rem', color: 'var(--c-text)', marginBottom: '16px', fontWeight: 800 }}>Relational Data (SQL)</h2>
-                <p style={{ color: 'var(--c-text2)', fontSize: '1.1rem', maxWidth: '800px', lineHeight: '1.6' }}>
+                <h2 className="docs-heading">Relational Data (SQL)</h2>
+                <p className="docs-subheading">
                     For global features like the <strong>Leaderboard</strong> and <strong>Compliance Tracking</strong>, Vibeo uses a relational <strong>PostgreSQL</strong> database hosted on Neon. This allows for complex aggregations and cross-user queries that are inefficient in NoSQL.
                 </p>
-                <div style={{ display: 'flex', gap: '16px', marginTop: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f38ba8', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(243, 139, 168, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#f38ba8', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(243, 139, 168, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
                         <Database size={16} /> PostgreSQL / Neon
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cba6f7', fontSize: '0.9rem', fontWeight: 600, background: 'rgba(203, 166, 247, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#cba6f7', fontSize: '0.85rem', fontWeight: 600, background: 'rgba(203, 166, 247, 0.1)', padding: '8px 16px', borderRadius: '20px' }}>
                         <LayoutList size={16} /> Relational Schema
                     </div>
                 </div>
