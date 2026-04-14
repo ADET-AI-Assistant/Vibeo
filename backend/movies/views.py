@@ -1,6 +1,10 @@
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 import os
+import logging
+
+logger = logging.getLogger(__name__)
 from rest_framework import viewsets, permissions, status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -82,29 +86,19 @@ class WatchHistoryViewSet(viewsets.ReadOnlyModelViewSet):
 
     # Allow posting to history too
     def create(self, request, *args, **kwargs):
-        tmdb_id = request.data.get('tmdb_id')
-        media_type = request.data.get('media_type', 'movie')
-        # Update or create history entry
-        obj, created = WatchHistory.objects.update_or_create(
-            user=request.user, 
-            tmdb_id=tmdb_id, 
-            media_type=media_type,
-            defaults={
-                'title': request.data.get('title'),
-                'name': request.data.get('name'),
-                'poster_path': request.data.get('poster_path'),
-            }
-        )
-        serializer = self.get_serializer(obj)
-        return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+@method_decorator(cache_page(60 * 5), name='dispatch')
 class LeaderboardViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.AllowAny,)
     serializer_class = UserStatSerializer
     
     def get_queryset(self):
-        # Order by total watch time (descending) and limit to top 50 for production performance
-        return UserStat.objects.all().order_by('-total_watch_time')[:50]
+        # Order by total watch time (descending). Pagination is handled by settings.
+        return UserStat.objects.all().order_by('-total_watch_time')
 @method_decorator(csrf_exempt, name='dispatch')
 class SyncStatsView(APIView):
     permission_classes = (permissions.AllowAny,)
@@ -117,6 +111,7 @@ class SyncStatsView(APIView):
             
             # Normalize inputs to ensure no 'None' values reach integer fields
             username = request.data.get('username', 'Anonymous')
+            logger.info(f"Syncing stats for user: {username} (Firebase UID: {firebase_uid})")
             avatar_url = request.data.get('avatar_url', '')
             total_watch_time = int(request.data.get('total_watch_time', 0) or 0)
             current_streak = int(request.data.get('current_streak', 0) or 0)
@@ -156,17 +151,4 @@ class HealthCheckView(APIView):
             "secret_key_set": str(bool(os.environ.get('SECRET_KEY')))
         })
 
-class MigrateDatabaseView(APIView):
-    permission_classes = (permissions.AllowAny,)
-    
-    def get(self, request):
-        from django.core.management import call_command
-        try:
-            # Force run migrations in-process
-            # Using stdout to capture output
-            import io
-            out = io.StringIO()
-            call_command('migrate', interactive=False, stdout=out)
-            return Response({"status": "Success", "output": out.getvalue()})
-        except Exception as e:
-            return Response({"status": "Error", "message": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
