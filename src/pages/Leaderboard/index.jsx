@@ -17,7 +17,9 @@ const Leaderboard = () => {
     const loadLeaderboard = async () => {
         setLoading(true);
         const data = await fetchLeaderboard();
-        setStats(data);
+        // Handle paginated response: { count, results, next, previous }
+        const rankings = data?.results || (Array.isArray(data) ? data : []);
+        setStats(rankings);
         setLoading(false);
     };
 
@@ -55,6 +57,11 @@ const Leaderboard = () => {
 
     const podiums = sortedStats.slice(0, 3);
     const list = sortedStats.slice(3);
+
+    const handleImageError = (e, username) => {
+        e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff`;
+        e.target.onerror = null; // Prevent infinite loops
+    };
 
     return (
         <div className="leaderboard-page">
@@ -122,7 +129,11 @@ const Leaderboard = () => {
                         {podiums[1] && (
                             <div className="podium-item second">
                                 <div className="avatar-wrapper">
-                                    <img src={podiums[1].avatar_url || `https://ui-avatars.com/api/?name=${podiums[1].username}&background=random`} alt={podiums[1].username} />
+                                    <img 
+                                        src={podiums[1].avatar_url || `https://ui-avatars.com/api/?name=${podiums[1].username}&background=random&color=fff`} 
+                                        alt={podiums[1].username} 
+                                        onError={(e) => handleImageError(e, podiums[1].username)}
+                                    />
                                     <div className="rank-badge">2</div>
                                 </div>
                                 <div className="user-info">
@@ -138,7 +149,11 @@ const Leaderboard = () => {
                         {podiums[0] && (
                             <div className="podium-item first">
                                 <div className="avatar-wrapper">
-                                    <img src={podiums[0].avatar_url || `https://ui-avatars.com/api/?name=${podiums[0].username}&background=random`} alt={podiums[0].username} />
+                                    <img 
+                                        src={podiums[0].avatar_url || `https://ui-avatars.com/api/?name=${podiums[0].username}&background=random&color=fff`} 
+                                        alt={podiums[0].username} 
+                                        onError={(e) => handleImageError(e, podiums[0].username)}
+                                    />
                                     <div className="crown">👑</div>
                                     <div className="rank-badge">1</div>
                                 </div>
@@ -155,7 +170,11 @@ const Leaderboard = () => {
                         {podiums[2] && (
                             <div className="podium-item third">
                                 <div className="avatar-wrapper">
-                                    <img src={podiums[2].avatar_url || `https://ui-avatars.com/api/?name=${podiums[2].username}&background=random`} alt={podiums[2].username} />
+                                    <img 
+                                        src={podiums[2].avatar_url || `https://ui-avatars.com/api/?name=${podiums[2].username}&background=random&color=fff`} 
+                                        alt={podiums[2].username} 
+                                        onError={(e) => handleImageError(e, podiums[2].username)}
+                                    />
                                     <div className="rank-badge">3</div>
                                 </div>
                                 <div className="user-info">
@@ -175,7 +194,12 @@ const Leaderboard = () => {
                             {list.map((user, index) => (
                                 <div key={user.firebase_uid} className="list-item">
                                     <span className="rank-num">{index + 4}</span>
-                                    <img src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random`} alt={user.username} className="user-avatar" />
+                                    <img 
+                                        src={user.avatar_url || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`} 
+                                        alt={user.username} 
+                                        className="user-avatar" 
+                                        onError={(e) => handleImageError(e, user.username)}
+                                    />
                                     <span className="username">{user.username}</span>
                                     <span className="user-stat-value">
                                         {view === 'streak' ? (
