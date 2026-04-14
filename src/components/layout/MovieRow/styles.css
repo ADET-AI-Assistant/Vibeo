@@ -82,17 +82,13 @@
 /* ── Scrollable track ── */
 .row-track {
     display: flex;
-    gap: 1rem;
+    gap: 1.15rem;
     overflow-x: auto;
-    padding-bottom: 1rem;
-    /* space for scrollbar or shadow */
     scroll-behavior: smooth;
     scrollbar-width: none;
-    /* firefox */
-    margin: 0 -1.5rem;
-    /* extend to edge */
-    padding: 0 1.5rem 1rem;
-    /* padding inside to offset negative margin */
+    -ms-overflow-style: none;
+    margin: -1.5rem -1.5rem 0;
+    padding: 1.5rem 1.5rem 2.5rem;
 }
 
 .row-track::-webkit-scrollbar {
