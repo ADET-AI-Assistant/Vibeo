@@ -104,7 +104,7 @@ class FavoriteViewSet(viewsets.ModelViewSet):
         if not existing:
             serializer.save(user=self.request.user)
 
-class WatchHistoryViewSet(viewsets.ReadOnlyModelViewSet):
+class WatchHistoryViewSet(viewsets.ModelViewSet):
     serializer_class = WatchHistorySerializer
 
     def get_queryset(self):
@@ -112,12 +112,8 @@ class WatchHistoryViewSet(viewsets.ReadOnlyModelViewSet):
             return WatchHistory.objects.none()
         return WatchHistory.objects.filter(user=self.request.user)
 
-    # Allow posting to history too
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 @method_decorator(cache_page(60 * 5), name='dispatch')
 class LeaderboardViewSet(viewsets.ReadOnlyModelViewSet):
