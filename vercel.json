@@ -6,6 +6,14 @@
       "use": "@vercel/static-build"
     },
     {
+      "src": "api/groq.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/huggingface.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "backend/vercel_app.py",
       "use": "@vercel/python",
       "config": { "maxDuration": 60 }
@@ -15,6 +23,14 @@
     {
       "src": "/fanart-api/(.*)",
       "dest": "https://webservice.fanart.tv/v3/$1"
+    },
+    {
+      "src": "/api/groq",
+      "dest": "api/groq.js"
+    },
+    {
+      "src": "/api/huggingface",
+      "dest": "api/huggingface.js"
     },
     {
       "src": "/api/v1/(.*)",
@@ -36,4 +52,4 @@
       "dest": "/index.html"
     }
   ]
-}
+}
