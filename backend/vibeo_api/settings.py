@@ -40,6 +40,7 @@ ALLOWED_HOSTS = [
     '.vercel.app', 
     'localhost', 
     '127.0.0.1',
+    '10.0.2.2',
     'vibeo-stream.vercel.app',
     'vibeo-stream.online',
     'www.vibeo-stream.online'

@@ -2,7 +2,15 @@ import React, { createContext, useContext, useState, useEffect, useRef, useCallb
 import { doc, onSnapshot, updateDoc, arrayUnion, arrayRemove, setDoc, increment, getDoc, runTransaction } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
-import { syncUserStats } from '@/api/djangoClient';
+import {
+    createFavorite,
+    createHistoryItem,
+    deleteFavorite,
+    deleteWatchlistItem,
+    getDjangoToken,
+    syncUserStats,
+    updateWatchlistItem,
+} from '@/api/djangoClient';
 import { triggerError } from '@/components/common/ErrorToast';
 
 const UserMoviesContext = createContext();
@@ -28,6 +36,18 @@ export const UserMoviesProvider = ({ children }) => {
     const [activityPoints, setActivityPoints] = useState({}); // { 'YYYY-MM-DD': points }
     const [loading, setLoading] = useState(true);
     const streakCheckedRef = useRef(false);
+
+    const mirrorToDjango = async (operation) => {
+        if (!getDjangoToken()) return null;
+
+        try {
+            return await operation();
+        } catch (error) {
+            console.warn('Django API mirror failed:', error);
+            triggerError('Saved locally, but Django API sync failed.', 'error');
+            return null;
+        }
+    };
 
     useEffect(() => {
         if (!currentUser) {
@@ -170,6 +190,7 @@ export const UserMoviesProvider = ({ children }) => {
             await updateDoc(userRef, {
                 watchlist: arrayUnion(movieWithStatus)
             });
+            await mirrorToDjango(() => updateWatchlistItem(movieWithStatus, status));
             return true;
         } catch (error) {
             console.error("Error adding to watchlist:", error);
@@ -193,6 +214,7 @@ export const UserMoviesProvider = ({ children }) => {
                 
                 transaction.update(userRef, { watchlist: newList });
             });
+            await mirrorToDjango(() => deleteWatchlistItem(movie));
             
             return true;
         } catch (error) {
@@ -257,6 +279,8 @@ export const UserMoviesProvider = ({ children }) => {
                 recordActivity(1);
             }
 
+            await mirrorToDjango(() => updateWatchlistItem(movie, newStatus));
+
             return true;
         } catch (error) {
             console.error("Error updating watchlist status:", error);
@@ -305,6 +329,7 @@ export const UserMoviesProvider = ({ children }) => {
             currentList.unshift(simpleMovie);
             if (currentList.length > 20) currentList = currentList.slice(0, 20);
             await setDoc(userRef, { continueWatching: currentList }, { merge: true });
+            await mirrorToDjango(() => createHistoryItem(simpleMovie));
         } catch (error) {
             console.error("Error adding to continue watching:", error);
             triggerError("Could not update your watch history.");
@@ -387,6 +412,7 @@ export const UserMoviesProvider = ({ children }) => {
             if (isFav) {
                 const exactMovie = favoriteMovies.find(m => m.id === movie.id);
                 await updateDoc(userRef, { favoriteMovies: arrayRemove(exactMovie) });
+                await mirrorToDjango(() => deleteFavorite(exactMovie || movie));
             } else {
                 const simpleMovie = {
                     id: Number(movie.id),
@@ -398,6 +424,7 @@ export const UserMoviesProvider = ({ children }) => {
                     release_date: movie.release_date || movie.first_air_date || null
                 };
                 await updateDoc(userRef, { favoriteMovies: arrayUnion(simpleMovie) });
+                await mirrorToDjango(() => createFavorite(simpleMovie));
             }
             return true;
         } catch (error) {

@@ -2,6 +2,16 @@ import React, { useState } from 'react';
 import { Send, Activity, ShieldAlert, Key, UserCheck, ShieldOff } from 'lucide-react';
 import CodeBlock from '../components/CodeBlock';
 import { useAuth } from '../../../context/AuthContext';
+import {
+    clearDjangoToken,
+    createWatchlistItem,
+    deleteWatchlistItem,
+    djangoLogin,
+    djangoRegister,
+    fetchWatchlist,
+    getDjangoToken,
+    updateWatchlistItem,
+} from '../../../api/djangoClient';
 
 const ApiTesterCard = ({ title, method, endpoint, description, demoBody, apiCallHandler }) => {
     const [response, setResponse] = useState(null);
@@ -184,6 +194,124 @@ const AuthStatusCard = () => {
     );
 };
 
+const DjangoAuthCard = () => {
+    const [mode, setMode] = useState('login');
+    const [username, setUsername] = useState('lab9user');
+    const [email, setEmail] = useState('lab9user@example.com');
+    const [password, setPassword] = useState('Lab9Pass123!');
+    const [token, setToken] = useState(getDjangoToken());
+    const [response, setResponse] = useState(null);
+    const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    const fieldStyle = {
+        padding: '12px',
+        borderRadius: '10px',
+        border: '1px solid var(--c-surface2)',
+        background: 'var(--c-surface)',
+        color: 'var(--c-text)'
+    };
+
+    const handleAuth = async () => {
+        setLoading(true);
+        setError(false);
+        try {
+            const data = mode === 'login'
+                ? await djangoLogin({ username, password })
+                : await djangoRegister({ username, email, password });
+            setToken(data.token);
+            setResponse(JSON.stringify(data, null, 2));
+        } catch (err) {
+            setError(true);
+            setResponse(JSON.stringify({ error: err.message }, null, 2));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleClear = () => {
+        clearDjangoToken();
+        setToken(null);
+        setError(false);
+        setResponse(JSON.stringify({ success: 'Django token cleared' }, null, 2));
+    };
+
+    return (
+        <div style={{
+            background: 'var(--c-bg)',
+            borderRadius: '16px',
+            border: `1px solid ${token ? '#a6e3a1' : '#f9e2af'}`,
+            overflow: 'hidden',
+            marginBottom: '40px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+        }}>
+            <div className="api-card-header">
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                        <span style={{
+                            background: 'rgba(203, 166, 247, 0.2)', color: '#cba6f7',
+                            padding: '4px 10px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: 700, letterSpacing: '1px'
+                        }}>TOKEN</span>
+                        <code style={{ color: 'var(--c-text)', fontSize: '0.9rem', fontWeight: 600 }}>/api/v1/auth/{mode}/</code>
+                    </div>
+                    <p style={{ margin: 0, color: 'var(--c-text2)', fontSize: '0.9rem' }}>Django REST Framework token authentication</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: token ? '#a6e3a1' : '#f9e2af', fontWeight: 700 }}>
+                    {token ? <UserCheck size={20} /> : <ShieldOff size={20} />}
+                    <span style={{ whiteSpace: 'nowrap' }}>{token ? 'TOKEN STORED' : 'NO TOKEN'}</span>
+                </div>
+            </div>
+
+            <div style={{ padding: '24px' }}>
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '16px' }}>
+                    {['login', 'register'].map((item) => (
+                        <button
+                            key={item}
+                            className="api-card-test-btn"
+                            onClick={() => setMode(item)}
+                            style={{
+                                padding: '10px 18px',
+                                borderRadius: '10px',
+                                border: '1px solid var(--c-surface2)',
+                                background: mode === item ? 'var(--c-text)' : 'transparent',
+                                color: mode === item ? 'var(--c-bg)' : 'var(--c-text)',
+                                fontWeight: 700,
+                                textTransform: 'capitalize'
+                            }}
+                        >
+                            {item}
+                        </button>
+                    ))}
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                    <input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="username" style={fieldStyle} />
+                    {mode === 'register' && <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" style={fieldStyle} />}
+                    <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password" type="password" style={fieldStyle} />
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                    <button onClick={handleAuth} disabled={loading} className="api-card-test-btn" style={{ background: 'var(--c-text)', color: 'var(--c-bg)', border: 'none', padding: '10px 24px', borderRadius: '12px', fontWeight: 700 }}>
+                        {loading ? 'Sending...' : mode === 'login' ? 'Send Login Request' : 'Send Register Request'}
+                    </button>
+                    <button onClick={handleClear} className="api-card-test-btn" style={{ background: 'transparent', color: 'var(--c-text2)', border: '1px solid var(--c-surface2)', padding: '10px 18px', borderRadius: '12px', fontWeight: 700 }}>
+                        Clear Token
+                    </button>
+                </div>
+
+                {response && (
+                    <div style={{ marginTop: '20px' }}>
+                        <h5 style={{ color: error ? '#f38ba8' : '#a6e3a1', fontSize: '0.85rem', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                            Auth Response
+                        </h5>
+                        <CodeBlock code={response} language="json" />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
 const ApiDocsSection = () => {
 
     // Dummy handler for demo purposes - hits real TMDB API but just trending
@@ -321,6 +449,13 @@ const ApiDocsSection = () => {
         return await res.json();
     };
 
+    const sampleMovie = {
+        id: 157336,
+        title: 'Interstellar',
+        poster_path: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+        media_type: 'movie',
+    };
+
     return (
         <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
             <div className="docs-header-wrapper">
@@ -345,6 +480,7 @@ const ApiDocsSection = () => {
             </div>
 
             <AuthStatusCard />
+            <DjangoAuthCard />
 
             <ApiTesterCard 
                 title="Global Leaderboard — SQL Aggregate"
@@ -367,6 +503,45 @@ const ApiDocsSection = () => {
                     highest_streak: 10
                 }, null, 2)}
                 apiCallHandler={syncStats}
+            />
+
+            <ApiTesterCard
+                title="Protected Watchlist Retrieve"
+                method="GET"
+                endpoint="/api/v1/watchlist"
+                description="Fetches the logged-in user's watchlist using Authorization: Token <token>."
+                apiCallHandler={fetchWatchlist}
+            />
+
+            <ApiTesterCard
+                title="Protected Watchlist Create"
+                method="POST"
+                endpoint="/api/v1/watchlist"
+                description="Creates a watchlist row in the Django database from the React UI."
+                demoBody={JSON.stringify({
+                    tmdb_id: sampleMovie.id,
+                    title: sampleMovie.title,
+                    media_type: sampleMovie.media_type,
+                    status: 'planning'
+                }, null, 2)}
+                apiCallHandler={() => createWatchlistItem(sampleMovie, 'planning')}
+            />
+
+            <ApiTesterCard
+                title="Protected Watchlist Update"
+                method="PATCH"
+                endpoint="/api/v1/watchlist/{id}"
+                description="Updates the existing watchlist row and verifies the modified database state through the API."
+                demoBody={JSON.stringify({ status: 'completed' }, null, 2)}
+                apiCallHandler={() => updateWatchlistItem(sampleMovie, 'completed')}
+            />
+
+            <ApiTesterCard
+                title="Protected Watchlist Delete"
+                method="DELETE"
+                endpoint="/api/v1/watchlist/{id}"
+                description="Deletes the sample watchlist row through the API. Fetch the watchlist again to confirm it no longer appears."
+                apiCallHandler={() => deleteWatchlistItem(sampleMovie).then((res) => res || { deleted: true })}
             />
 
             <ApiTesterCard 

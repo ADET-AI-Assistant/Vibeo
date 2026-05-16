@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  envDir: './backend',
   plugins: [
     react(),
     tailwindcss(), // Tailwind CSS v4 Vite plugin

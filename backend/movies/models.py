@@ -6,6 +6,7 @@ class WatchlistItem(models.Model):
         ('planning', 'Planning'),
         ('watching', 'Watching'),
         ('completed', 'Completed'),
+        ('on_hold', 'On Hold'),
         ('dropped', 'Dropped'),
     ]
     
