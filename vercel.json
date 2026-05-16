@@ -9,6 +9,10 @@
       "src": "backend/vercel_app.py",
       "use": "@vercel/python",
       "config": { "maxDuration": 60 }
+    },
+    {
+      "src": "api/**/*.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -23,6 +27,10 @@
     {
       "src": "/admin/(.*)",
       "dest": "backend/vercel_app.py"
+    },
+    {
+      "src": "/api/(huggingface|groq)",
+      "dest": "/api/$1.js"
     },
     {
       "src": "/static/(.*)",
