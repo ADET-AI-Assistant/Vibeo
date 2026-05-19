@@ -172,13 +172,19 @@ const App = () => {
 
   useEffect(() => {
     // Basic route protection for onboarding flow
-    if (currentUser && isOnboarded !== null) {
-      const isNavigatingToOnboarding = location.pathname === '/onboarding';
+    const isNavigatingToOnboarding = location.pathname === '/onboarding';
 
+    if (currentUser && isOnboarded !== null) {
       if (isOnboarded === false && !isNavigatingToOnboarding) {
         navigate('/onboarding', { replace: true });
       } else if (isOnboarded === true && isNavigatingToOnboarding) {
         navigate('/', { replace: true });
+      }
+    } else if (!currentUser) {
+      // Unauthenticated users flow
+      const hasSkipped = localStorage.getItem('vibeo_guest_onboarding_skipped');
+      if (!hasSkipped && !isNavigatingToOnboarding && location.pathname === '/') {
+        navigate('/onboarding', { replace: true });
       }
     }
   }, [currentUser, isOnboarded, location.pathname, navigate]);
