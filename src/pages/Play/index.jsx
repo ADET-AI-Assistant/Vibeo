@@ -262,6 +262,7 @@ const Play = () => {
                                 src={embedUrl}
                                 title={isTV ? `${title} S${activeSeason}E${activeEpisode}` : `Watch ${title}`}
                                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media; web-share"
+                                allowFullScreen
                                 referrerPolicy="no-referrer-when-downgrade"
                                 scrolling="no"
                                 onLoad={handleLoad}

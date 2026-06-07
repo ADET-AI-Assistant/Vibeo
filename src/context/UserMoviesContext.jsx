@@ -433,10 +433,13 @@ export const UserMoviesProvider = ({ children }) => {
         }
     };
 
-    const saveOnboardingData = async ({ favorites = [], seen = [] }) => {
-        if (!currentUser) return;
+    const saveOnboardingData = async ({ favorites = [], seen = [] }, explicitUid = null, explicitUser = null) => {
+        const uid = explicitUid || (currentUser ? currentUser.uid : null);
+        const userObj = explicitUser || currentUser;
+        
+        if (!uid || !userObj) return;
         try {
-            const userRef = doc(db, 'users', currentUser.uid);
+            const userRef = doc(db, 'users', uid);
 
             // Add all "seen" movies to the watchlist as 'completed'
             // To do this reliably during onboarding without triggering UI weirdness,
@@ -482,8 +485,8 @@ export const UserMoviesProvider = ({ children }) => {
                 onboarded: true,
                 favoriteMovies: sanitizedFavorites,
                 watchlist: updatedWatchlist,
-                email: currentUser.email,
-                displayName: currentUser.displayName,
+                email: userObj.email,
+                displayName: userObj.displayName,
                 lastActiveDate: getLocalISOString()
             }, { merge: true });
 

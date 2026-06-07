@@ -321,3 +321,46 @@
     opacity: 0.7;
     cursor: not-allowed;
 }
+
+/* Guest Actions in Header */
+.onboarding-guest-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.guest-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.guest-action-btn.skip-btn {
+    background: transparent;
+    color: var(--c-text2);
+}
+
+.guest-action-btn.skip-btn:hover {
+    color: var(--c-text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.guest-action-btn.login-btn {
+    background: var(--c-surface2);
+    color: var(--c-text);
+    border: 1px solid var(--c-surface3);
+}
+
+.guest-action-btn.login-btn:hover {
+    background: var(--c-surface3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
