@@ -262,9 +262,12 @@ const Play = () => {
                                 src={embedUrl}
                                 title={isTV ? `${title} S${activeSeason}E${activeEpisode}` : `Watch ${title}`}
                                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media; web-share"
-                                allowFullScreen
+                                allowFullScreen={true}
+                                webkitAllowFullScreen={true}
+                                mozAllowFullScreen={true}
                                 referrerPolicy="no-referrer-when-downgrade"
                                 scrolling="no"
+                                frameBorder="0"
                                 onLoad={handleLoad}
                                 onError={() => { setPlayerError(true); setPlayerReady(true); }}
                                 className={`play-iframe ${playerReady ? 'play-iframe--ready' : ''}`}
