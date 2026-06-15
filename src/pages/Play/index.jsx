@@ -142,6 +142,7 @@ const Play = () => {
         }
     };
 
+
     /* ── Auto-next episode ── */
     const goNextEpisode = useCallback(() => {
         const nextEp = episodes.find(e => e.episode_number === activeEpisode + 1);
@@ -259,12 +260,17 @@ const Play = () => {
                         {!isUnreleasedTitle && (
                             <iframe
                                 key={embedUrl}
+                                ref={(el) => {
+                                    if (el) {
+                                        el.setAttribute('allowfullscreen', '');
+                                        el.setAttribute('webkitallowfullscreen', '');
+                                        el.setAttribute('mozallowfullscreen', '');
+                                    }
+                                }}
                                 src={embedUrl}
                                 title={isTV ? `${title} S${activeSeason}E${activeEpisode}` : `Watch ${title}`}
                                 allow="autoplay; fullscreen; picture-in-picture; encrypted-media; web-share"
-                                allowFullScreen={true}
-                                webkitAllowFullScreen={true}
-                                mozAllowFullScreen={true}
+                                allowFullScreen
                                 referrerPolicy="no-referrer-when-downgrade"
                                 scrolling="no"
                                 frameBorder="0"
@@ -273,6 +279,7 @@ const Play = () => {
                                 className={`play-iframe ${playerReady ? 'play-iframe--ready' : ''}`}
                             />
                         )}
+
                     </div>
                 </section>
 

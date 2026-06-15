@@ -7,8 +7,8 @@ export const STREAM_PROVIDERS = [
     {
         key: 'videasy',
         label: 'Videasy',
-        movieUrl: (id) => `https://player.videasy.net/movie/${id}`,
-        tvUrl: (id, season, episode) => `https://player.videasy.net/tv/${id}/${season}/${episode}`,
+        movieUrl: (id) => `https://player.videasy.to/movie/${id}`,
+        tvUrl: (id, season, episode) => `https://player.videasy.to/tv/${id}/${season}/${episode}`,
     }
 ];
 
