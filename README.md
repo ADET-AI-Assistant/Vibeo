@@ -7,7 +7,7 @@
 [![Django](https://img.shields.io/badge/Django-5.2%20REST-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-Auth%20%26%20Firestore-FFCA28?logo=firebase&logoColor=black)](https://firebase.google.com/)
 [![Gemini AI](https://img.shields.io/badge/Google-Gemini%20AI-4285F4?logo=google&logoColor=white)](https://ai.google.dev/)
-[![Tests](https://img.shields.io/badge/Vitest-23%2F23%20Passing-449C44?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Tests](https://img.shields.io/badge/Vitest-20%2F20%20Passing-449C44?logo=vitest&logoColor=white)](https://vitest.dev/)
 
 **Vibeo** is a next-generation personal streaming and discovery platform. It combines cinematic content browsing, Google Gemini AI mood-matching, and a dedicated **10-Foot TV Mode** designed for Smart TVs, gamepads, and remote controls.
 
@@ -217,7 +217,6 @@ npm test
 - **`remoteKeyMapper.test.js`**: Keycode normalization for Samsung Tizen, LG webOS, Android TV, keyboards, and color keys.
 - **`spatialNavigation.test.jsx`**: 4-way D-Pad navigation, boundary trapping, carousel row-to-sidebar transitions, and select actions.
 - **`TVVirtualKeyboard.test.jsx`**: Remote keyboard grid traversal, character typing, backspace, and clear.
-- **`TVPlayerOSD.test.jsx`**: Player HUD controls, seek feedback badges (-10s / +10s), and play/pause toggles.
 - **`TVWatchlist.test.jsx`**: Guest persistence with `localStorage`, hero watchlist state toggles, and TV Library carousel population.
 
 ---

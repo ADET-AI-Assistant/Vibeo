@@ -24,6 +24,7 @@ const Play = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const type = searchParams.get('type') || 'movie';
+    const fromTV = searchParams.get('from') === 'tv';
     const isTV = type === 'tv';
 
     /* ── Common state ── */
@@ -131,6 +132,25 @@ const Play = () => {
         };
     }, []);
 
+    const handleBack = useCallback(() => {
+        if (fromTV) {
+            navigate(`/tv/watch/${id}?type=${type}`);
+        } else {
+            navigate(-1);
+        }
+    }, [fromTV, id, type, navigate]);
+
+    // Handle remote Return / Escape key
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape' || e.keyCode === 10009 || e.keyCode === 461 || e.keyCode === 4) {
+                handleBack();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [handleBack]);
+
     const handleLoad = () => {
         setPlayerReady(true);
         setShowSlowWarning(false);
@@ -182,9 +202,33 @@ const Play = () => {
             {/* ── Breadcrumb bar ── */}
             <div className="play-topbar">
                 <nav className="play-breadcrumb" aria-label="Breadcrumb">
-                    <Link to="/" className="play-breadcrumb__link">Home</Link>
+                    <button
+                        onClick={handleBack}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '6px 14px',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            border: '1px solid rgba(255, 255, 255, 0.18)',
+                            borderRadius: '8px',
+                            color: '#fff',
+                            fontSize: '0.85rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            marginRight: '8px',
+                            transition: 'background 0.2s',
+                        }}
+                    >
+                        ← Back
+                    </button>
+                    <Link to={fromTV ? "/tv" : "/"} className="play-breadcrumb__link">
+                        {fromTV ? "TV Home" : "Home"}
+                    </Link>
                     <span className="play-breadcrumb__sep">&gt;</span>
-                    <Link to={`/watch/${id}?type=${type}`} className="play-breadcrumb__link">{title}</Link>
+                    <Link to={fromTV ? `/tv/watch/${id}?type=${type}` : `/watch/${id}?type=${type}`} className="play-breadcrumb__link">
+                        {title}
+                    </Link>
                     {isTV && (
                         <>
                             <span className="play-breadcrumb__sep">&gt;</span>

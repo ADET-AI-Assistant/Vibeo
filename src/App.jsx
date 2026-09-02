@@ -163,13 +163,13 @@ const TVDiscover = lazy(() => import('@/tv/pages/TVDiscover'));
 const TVLibrary = lazy(() => import('@/tv/pages/TVLibrary'));
 const TVSettings = lazy(() => import('@/tv/pages/TVSettings'));
 const TVWatch = lazy(() => import('@/tv/pages/TVWatch'));
-const TVPlay = lazy(() => import('@/tv/pages/TVPlay'));
 
 const App = () => {
   const { currentUser, isOnboarded } = useAuth();
   const { showVibeyChat } = useLayout();
   const navigate = useNavigate();
   const location = useLocation();
+  const isTVRoute = location.pathname.startsWith('/tv') || new URLSearchParams(location.search).get('from') === 'tv';
 
   useEffect(() => {
     // Disable browser scroll restoration to prevent "flashing" old scroll positions
@@ -214,8 +214,6 @@ const App = () => {
       html.classList.remove('no-scrollbar');
     };
   }, [location.pathname]);
-
-  const isTVRoute = location.pathname.startsWith('/tv');
 
   useEffect(() => {
     // Smart TV auto-detection (Tizen, webOS, Android TV, Apple TV, Fire TV)
@@ -270,16 +268,8 @@ const App = () => {
               <Route path="settings" element={<TVSettings />} />
               <Route path="watch/:id" element={<TVWatch />} />
             </Route>
-            <Route
-              path="/tv/play/:id"
-              element={
-                <TVFocusProvider>
-                  <TVPlay />
-                </TVFocusProvider>
-              }
-            />
-
-            {/* Play page – dedicated player */}
+            {/* Play page – dedicated player (works for both desktop and TV) */}
+            <Route path="/tv/play/:id" element={<Play />} />
             <Route path="/play/:id" element={<Play />} />
 
             {/* 404 fallback */}
@@ -308,12 +298,12 @@ const App = () => {
         </Suspense>
       </ErrorBoundary>
 
-        {/* Avoid rendering footer on TV routes, app-like views, or full-screen discovery pages */}
+        {/* Avoid rendering footer on TV routes, player, or full-screen discovery pages */}
         {!isTVRoute && !['/onboarding', '/profile', '/settings', '/vibey'].some(p => location.pathname === p) && 
-         !location.pathname.startsWith('/discover') && <Footer />}
+         !location.pathname.startsWith('/discover') && !location.pathname.startsWith('/play') && <Footer />}
 
-        {/* Vibey AI Chatbot — global floating overlay (Hidden on TV routes and app-like views) */}
-        {showVibeyChat && !isTVRoute && !['/settings', '/onboarding', '/profile'].includes(location.pathname) && <VibeyChat />}
+        {/* Vibey AI Chatbot — global floating overlay (Hidden on TV routes, player, and app-like views) */}
+        {showVibeyChat && !isTVRoute && !['/settings', '/onboarding', '/profile'].includes(location.pathname) && !location.pathname.startsWith('/play') && <VibeyChat />}
 
         {/* Global Error Notifications */}
         <ErrorToast />

@@ -54,7 +54,7 @@ export const TVHeroBanner = ({ movie }) => {
     const inWatchlist = isWatchlisted(movie.id);
 
     const handlePlay = () => {
-        navigate(`/tv/play/${movie.id}?type=${mediaType}`);
+        navigate(`/play/${movie.id}?type=${mediaType}&from=tv`);
     };
 
     const handleDetails = () => {

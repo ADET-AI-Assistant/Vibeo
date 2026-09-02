@@ -71,7 +71,7 @@ export const TVWatch = () => {
     const inWatchlist = isWatchlisted(movie.id);
 
     const handlePlay = () => {
-        navigate(`/tv/play/${id}?type=${type}`);
+        navigate(`/play/${id}?type=${type}&from=tv`);
     };
 
     const handleToggleWatchlist = async () => {
