@@ -1,8 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
     Layout as LayoutIcon, Maximize, Minimize,
     Monitor, Hash, Calendar, Tag, Clock,
-    Check, Layers, Star, MessageSquare
+    Check, Layers, Star, MessageSquare, Tv
 } from 'lucide-react';
 import { useLayout } from '@/context/LayoutContext';
 import './styles.css';
@@ -20,6 +21,8 @@ const LayoutSection = () => {
         dataSaverMode, setDataSaverMode
     } = useLayout();
 
+    const navigate = useNavigate();
+
     const toggleMetadata = (key) => {
         setShowMetadata(prev => ({
             ...prev,
@@ -30,6 +33,57 @@ const LayoutSection = () => {
     return (
         <div className="settings-section animate-fade-in layout-section">
             <h2><span className="icon"><LayoutIcon size={20} /></span> Layout</h2>
+
+            {/* TV Mode (10-Foot UI) Card */}
+            <section
+                className="settings-group"
+                style={{
+                    background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.12), rgba(59, 130, 246, 0.12))',
+                    border: '1px solid rgba(168, 85, 247, 0.35)',
+                    borderRadius: '16px',
+                    padding: '22px',
+                    marginBottom: '28px',
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+                    <div style={{ maxWidth: '480px' }}>
+                        <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', fontSize: '1.2rem', margin: 0 }}>
+                            <Tv size={20} color="var(--c-accent)" /> TV Mode (10-Foot UI)
+                        </h3>
+                        <p style={{ margin: '6px 0 0 0', color: 'var(--c-text2)', fontSize: '0.95rem', lineHeight: 1.5 }}>
+                            Lean-back interface optimized for Smart TVs (Tizen, webOS, Android TV), remote controls, and gamepads with full D-Pad spatial navigation.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            if (typeof document !== 'undefined' && !document.fullscreenElement) {
+                                document.documentElement.requestFullscreen().catch(() => {});
+                            }
+                            navigate('/tv');
+                        }}
+                        style={{
+                            padding: '12px 24px',
+                            background: 'var(--c-accent)',
+                            color: '#fff',
+                            border: 'none',
+                            borderRadius: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 16px var(--c-accent-glow)',
+                            transition: 'transform 0.2s ease',
+                        }}
+                        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.04)'}
+                        onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                    >
+                        <Tv size={18} />
+                        Launch TV Mode
+                    </button>
+                </div>
+            </section>
 
             {/* Card Size Selection */}
             <section className="settings-group">

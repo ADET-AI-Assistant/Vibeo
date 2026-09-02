@@ -19,6 +19,7 @@ import { useLayout } from '@/context/LayoutContext';
 import { UserMoviesProvider } from '@/context/UserMoviesContext';
 import ErrorToast from '@/components/common/ErrorToast';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { TVFocusProvider } from '@/tv/context/TVFocusContext';
 
 /**
  * Utility to Scroll to top on route change
@@ -154,8 +155,15 @@ const Library = lazy(() => import('@/pages/Library'));
 const DeveloperDocs = lazy(() => import('@/pages/Docs/DocsLayout'));
 const Leaderboard = lazy(() => import('@/pages/Leaderboard'));
 
-
-
+// TV Mode 10-Foot UI Pages
+const TVLayout = lazy(() => import('@/tv/components/TVLayout'));
+const TVDashboard = lazy(() => import('@/tv/pages/TVDashboard'));
+const TVSearch = lazy(() => import('@/tv/pages/TVSearch'));
+const TVDiscover = lazy(() => import('@/tv/pages/TVDiscover'));
+const TVLibrary = lazy(() => import('@/tv/pages/TVLibrary'));
+const TVSettings = lazy(() => import('@/tv/pages/TVSettings'));
+const TVWatch = lazy(() => import('@/tv/pages/TVWatch'));
+const TVPlay = lazy(() => import('@/tv/pages/TVPlay'));
 
 const App = () => {
   const { currentUser, isOnboarded } = useAuth();
@@ -207,6 +215,18 @@ const App = () => {
     };
   }, [location.pathname]);
 
+  const isTVRoute = location.pathname.startsWith('/tv');
+
+  useEffect(() => {
+    // Smart TV auto-detection (Tizen, webOS, Android TV, Apple TV, Fire TV)
+    const isSmartTV = /Tizen|webOS|SmartTV|Android TV|GoogleTV|AppleTV|HbbTV/i.test(navigator.userAgent);
+    const tvPromptDismissed = sessionStorage.getItem('vibeo_tv_prompt_dismissed');
+    if (isSmartTV && !location.pathname.startsWith('/tv') && !tvPromptDismissed) {
+      sessionStorage.setItem('vibeo_tv_prompt_dismissed', 'true');
+      navigate('/tv');
+    }
+  }, [location.pathname, navigate]);
+
   return (
     /*
      * <Routes> replaces the deprecated <Switch> from React Router v5.
@@ -215,7 +235,7 @@ const App = () => {
     <>
       <UserMoviesProvider>
         <ScrollToTop />
-        {location.pathname !== '/onboarding' && <Header />}
+        {location.pathname !== '/onboarding' && !isTVRoute && <Header />}
         <ErrorBoundary>
           <Suspense fallback={<LoadingScreen />}>
           <Routes>
@@ -241,6 +261,23 @@ const App = () => {
             <Route path="/docs" element={<DeveloperDocs />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
 
+            {/* TV Mode (10-Foot UI) Routes */}
+            <Route path="/tv" element={<TVLayout />}>
+              <Route index element={<TVDashboard />} />
+              <Route path="search" element={<TVSearch />} />
+              <Route path="discover" element={<TVDiscover />} />
+              <Route path="library" element={<TVLibrary />} />
+              <Route path="settings" element={<TVSettings />} />
+              <Route path="watch/:id" element={<TVWatch />} />
+            </Route>
+            <Route
+              path="/tv/play/:id"
+              element={
+                <TVFocusProvider>
+                  <TVPlay />
+                </TVFocusProvider>
+              }
+            />
 
             {/* Play page – dedicated player */}
             <Route path="/play/:id" element={<Play />} />
@@ -271,12 +308,12 @@ const App = () => {
         </Suspense>
       </ErrorBoundary>
 
-        {/* Avoid rendering footer on app-like views or full-screen discovery pages */}
-        {!['/onboarding', '/profile', '/settings', '/vibey'].some(p => location.pathname === p) && 
+        {/* Avoid rendering footer on TV routes, app-like views, or full-screen discovery pages */}
+        {!isTVRoute && !['/onboarding', '/profile', '/settings', '/vibey'].some(p => location.pathname === p) && 
          !location.pathname.startsWith('/discover') && <Footer />}
 
-        {/* Vibey AI Chatbot — global floating overlay (Hidden on app-like views) */}
-        {showVibeyChat && !['/settings', '/onboarding', '/profile'].includes(location.pathname) && <VibeyChat />}
+        {/* Vibey AI Chatbot — global floating overlay (Hidden on TV routes and app-like views) */}
+        {showVibeyChat && !isTVRoute && !['/settings', '/onboarding', '/profile'].includes(location.pathname) && <VibeyChat />}
 
         {/* Global Error Notifications */}
         <ErrorToast />

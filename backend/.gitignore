@@ -6,7 +6,8 @@ db.sqlite3
 
 # Collectstatic files (optional: ignore if using build step)
 staticfiles/
-static/
+static/*
+!static/.gitkeep
 
 # IDE files
 .vscode/

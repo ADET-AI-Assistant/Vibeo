@@ -1,0 +1,554 @@
+/* ================================================================
+   Vibeo TV Mode — 10-Foot Lean-Back Design System
+   Designed for Smart TVs, Remote Controls & Gamepads
+   ================================================================ */
+
+:root {
+  --tv-safe-x: 56px;
+  --tv-safe-y: 44px;
+  --tv-sidebar-collapsed: 80px;
+  --tv-sidebar-expanded: 260px;
+  --tv-card-w: 200px;
+  --tv-card-h: 300px;
+  --tv-font-scale: 1.25;
+  --tv-glow-ring: 0 0 0 3.5px var(--c-accent), 0 0 30px var(--c-accent-glow), 0 20px 40px rgba(0, 0, 0, 0.9);
+}
+
+/* Base TV Container */
+.tv-app-root {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: var(--c-bg, #0b0b12);
+  color: var(--c-text, #ececec);
+  overflow-x: hidden;
+  position: relative;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Hide mouse cursor when idle on TV */
+.tv-app-root.tv-cursor-hidden,
+.tv-app-root.tv-cursor-hidden * {
+  cursor: none !important;
+}
+
+/* TV Focus Outline & Scaling */
+.tv-focusable {
+  outline: none !important;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
+}
+
+.tv-focusable.tv-focused {
+  transform: scale(1.08) translateY(-4px);
+  box-shadow: var(--tv-glow-ring);
+  z-index: 50 !important;
+}
+
+/* Safe Area Wrapper */
+.tv-screen {
+  padding: var(--tv-safe-y) var(--tv-safe-x) var(--tv-safe-y) calc(var(--tv-sidebar-collapsed) + var(--tv-safe-x));
+  min-height: 100vh;
+  transition: padding-left 0.3s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* TV Left Rail Sidebar */
+.tv-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--tv-sidebar-collapsed);
+  background: rgba(12, 12, 20, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--tv-safe-y) 16px;
+  z-index: 100;
+  transition: width 0.28s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.28s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tv-sidebar.tv-sidebar--expanded {
+  width: var(--tv-sidebar-expanded);
+  box-shadow: 20px 0 50px rgba(0, 0, 0, 0.85);
+  background: rgba(14, 14, 24, 0.98);
+}
+
+.tv-sidebar__logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 10px;
+  margin-bottom: 24px;
+}
+
+.tv-sidebar__logo-badge {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--c-accent, #a855f7);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 1.5rem;
+  color: #fff;
+  box-shadow: 0 4px 16px var(--c-accent-glow, rgba(168, 85, 247, 0.4));
+}
+
+.tv-sidebar__logo-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #fff;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tv-sidebar.tv-sidebar--expanded .tv-sidebar__logo-title {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tv-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.tv-sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: transparent;
+  border: none;
+  color: var(--c-text2, #a1a1aa);
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.tv-sidebar__item-icon {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tv-sidebar__item-label {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tv-sidebar.tv-sidebar--expanded .tv-sidebar__item-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tv-sidebar__item.tv-focused {
+  background: var(--c-accent, #a855f7);
+  color: #fff;
+  transform: scale(1.04);
+  box-shadow: 0 4px 20px var(--c-accent-glow, rgba(168, 85, 247, 0.5));
+}
+
+.tv-sidebar__item.active:not(.tv-focused) {
+  color: var(--c-accent, #a855f7);
+  background: rgba(168, 85, 247, 0.12);
+}
+
+.tv-sidebar__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+}
+
+/* TV Hero Spotlight Banner */
+.tv-hero {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: 24px;
+  overflow: hidden;
+  margin-bottom: 36px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tv-hero__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  filter: brightness(0.85);
+  transition: opacity 0.5s ease;
+}
+
+.tv-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(11, 11, 18, 0.95) 0%, rgba(11, 11, 18, 0.75) 45%, rgba(11, 11, 18, 0.1) 100%),
+              linear-gradient(0deg, rgba(11, 11, 18, 0.95) 0%, transparent 60%);
+}
+
+.tv-hero__content {
+  position: relative;
+  z-index: 10;
+  padding: 48px;
+  max-width: 680px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.tv-hero__badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.tv-badge {
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+}
+
+.tv-badge--rating {
+  background: #22c55e;
+  color: #000;
+}
+
+.tv-badge--hd {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+}
+
+.tv-hero__title {
+  font-size: 2.8rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  color: #fff;
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.8);
+}
+
+.tv-hero__synopsis {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tv-hero__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.tv-btn {
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  backdrop-filter: blur(12px);
+}
+
+.tv-btn--primary {
+  background: var(--c-accent, #a855f7);
+  color: #fff;
+}
+
+.tv-btn.tv-focused {
+  background: #fff;
+  color: #000;
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 0 0 3.5px var(--c-accent), 0 0 28px var(--c-accent-glow);
+}
+
+/* TV Carousel Movie Row */
+.tv-row {
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.tv-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.tv-row__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--c-text, #fff);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tv-row__track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 16px 8px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tv-row__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* TV Movie Card */
+.tv-card {
+  width: var(--tv-card-w);
+  min-width: var(--tv-card-w);
+  height: var(--tv-card-h);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #141420;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.tv-card__poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.tv-card__gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(11, 11, 18, 0.95) 0%, rgba(11, 11, 18, 0.2) 50%, transparent 100%);
+  opacity: 0.85;
+}
+
+.tv-card__info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tv-card__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tv-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--c-text2, #a1a1aa);
+}
+
+.tv-card.tv-focused {
+  border-color: var(--c-accent, #a855f7);
+}
+
+/* TV On-Screen Virtual Keyboard */
+.tv-keyboard-container {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.tv-keyboard-panel {
+  background: rgba(18, 18, 28, 0.9);
+  padding: 32px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tv-keyboard-display {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 16px 20px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60px;
+}
+
+.tv-keyboard-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.tv-key {
+  height: 52px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.tv-key--span2 {
+  grid-column: span 2;
+  font-size: 1rem;
+}
+
+.tv-key--span3 {
+  grid-column: span 3;
+}
+
+.tv-key.tv-focused {
+  background: var(--c-accent, #a855f7);
+  color: #fff;
+}
+
+/* TV Video Player HUD */
+.tv-player-container {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.tv-player-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.tv-player-osd {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.3) 30%, transparent 60%, rgba(0, 0, 0, 0.8) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: var(--tv-safe-y) var(--tv-safe-x);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.tv-player-osd.tv-osd--hidden {
+  opacity: 0;
+}
+
+.tv-player-osd * {
+  pointer-events: auto;
+}
+
+.tv-player-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tv-player-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.tv-player-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tv-player-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.tv-player-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tv-player-btn--large {
+  width: 80px;
+  height: 80px;
+  background: var(--c-accent, #a855f7);
+}
+
+.tv-player-btn.tv-focused {
+  background: #fff;
+  color: #000;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px var(--c-accent), 0 0 30px var(--c-accent-glow);
+}

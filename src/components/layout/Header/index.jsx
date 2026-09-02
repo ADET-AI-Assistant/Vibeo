@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { fetchTMDB } from '@/api/tmdbClient';
 import { getUserSearchHistory, saveUserSearchHistory, removeUserSearchHistory } from '@/api/geminiClient';
 import { TMDB_IMAGE_BASE } from '@/config/constants';
-import { Compass, Sparkles, MessageSquare, Heart, Trophy } from 'lucide-react';
+import { Compass, Sparkles, MessageSquare, Heart, Trophy, Tv } from 'lucide-react';
 import './styles.css';
 
 const PREVIEW_COUNT = 5;
@@ -337,6 +337,10 @@ const Header = () => {
                                         <Trophy size={20} />
                                         Leaderboard
                                     </button>
+                                    <button className="mobile-sub-item" onClick={() => { setIsMobileMenuOpen(false); navigate('/tv'); }}>
+                                        <Tv size={20} />
+                                        TV Mode (10-Foot)
+                                    </button>
 
                                     {currentUser && (
                                         <button className="mobile-logout-btn" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
@@ -488,6 +492,43 @@ const Header = () => {
                                     )}
                                 </div>
                             )}
+
+                            <button
+                                className="topbar__tv-btn"
+                                onClick={() => {
+                                    if (typeof document !== 'undefined' && !document.fullscreenElement) {
+                                        document.documentElement.requestFullscreen().catch(() => {});
+                                    }
+                                    navigate('/tv');
+                                }}
+                                title="Switch to TV Mode (10-Foot UI)"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '7px 14px',
+                                    background: 'rgba(168, 85, 247, 0.15)',
+                                    border: '1px solid rgba(168, 85, 247, 0.35)',
+                                    borderRadius: '12px',
+                                    color: '#d8b4fe',
+                                    fontSize: '0.85rem',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.2s ease',
+                                    marginRight: '8px',
+                                }}
+                                onMouseOver={e => {
+                                    e.currentTarget.style.background = 'rgba(168, 85, 247, 0.25)';
+                                    e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+                                }}
+                                onMouseOut={e => {
+                                    e.currentTarget.style.background = 'rgba(168, 85, 247, 0.15)';
+                                    e.currentTarget.style.borderColor = 'rgba(168, 85, 247, 0.35)';
+                                }}
+                            >
+                                <Tv size={16} />
+                                <span>TV Mode</span>
+                            </button>
 
                             {renderActions("topbar__desktop-actions")}
 

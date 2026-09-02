@@ -49,10 +49,32 @@ export const UserMoviesProvider = ({ children }) => {
         }
     };
 
+    const GUEST_WATCHLIST_KEY = 'vibeo_guest_watchlist';
+    const GUEST_CONTINUE_KEY = 'vibeo_guest_continue_watching';
+    const GUEST_FAVORITES_KEY = 'vibeo_guest_favorites';
+
+    const getLocalData = (key) => {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : [];
+        } catch {
+            return [];
+        }
+    };
+
+    const setLocalData = (key, data) => {
+        try {
+            localStorage.setItem(key, JSON.stringify(data));
+        } catch (e) {
+            console.warn(`Failed to save ${key} to localStorage:`, e);
+        }
+    };
+
     useEffect(() => {
         if (!currentUser) {
-            setWatchlist([]);
-            setContinueWatching([]);
+            setWatchlist(getLocalData(GUEST_WATCHLIST_KEY));
+            setContinueWatching(getLocalData(GUEST_CONTINUE_KEY));
+            setFavoriteMovies(getLocalData(GUEST_FAVORITES_KEY));
             setTotalWatchTime(0);
             setStreakData({ current: 0, highest: 0, lastActiveDate: '' });
             setActivityPoints({});
@@ -165,27 +187,47 @@ export const UserMoviesProvider = ({ children }) => {
         return () => clearTimeout(syncTimeout);
     }, [currentUser, loading, totalWatchTime, streakData]);
 
-    // Helper functions (copied and adapted from the former hook)
+    // Helper functions with optimistic updates and guest fallback
 
     const addToWatchlist = async (movie, status = 'planning') => {
-        if (!currentUser) return false;
+        if (!movie) return false;
+
+        const movieWithStatus = {
+            ...movie,
+            id: Number(movie.id),
+            title: movie.title || movie.name || null,
+            name: movie.name || movie.title || null,
+            status,
+            media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
+            poster_path: movie.poster_path || null,
+            backdrop_path: movie.backdrop_path || null,
+            vote_average: movie.vote_average || 0,
+            release_date: movie.release_date || movie.first_air_date || null,
+            genre_ids: movie.genre_ids || [],
+            addedAt: Date.now()
+        };
+
+        // Always update local state optimistically
+        setWatchlist(prev => {
+            const currentList = prev || [];
+            const exists = currentList.some(m => Number(m.id) === Number(movie.id));
+            const updated = exists
+                ? currentList.map(m => Number(m.id) === Number(movie.id) ? { ...m, status, updatedAt: Date.now() } : m)
+                : [movieWithStatus, ...currentList];
+            if (!currentUser) setLocalData(GUEST_WATCHLIST_KEY, updated);
+            return updated;
+        });
+
+        if (!currentUser) return true;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             let currentList = watchlist || [];
 
-            // Prevent duplicates
-            if (currentList.some(m => m.id === Number(movie.id))) {
+            // Prevent duplicates in Firestore
+            if (currentList.some(m => Number(m.id) === Number(movie.id))) {
                 return await updateWatchlistStatus(movie, status);
             }
-
-            const movieWithStatus = {
-                ...movie,
-                id: Number(movie.id),
-                status,
-                media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
-                genre_ids: movie.genre_ids || [],
-                addedAt: Date.now()
-            };
 
             await updateDoc(userRef, {
                 watchlist: arrayUnion(movieWithStatus)
@@ -194,13 +236,23 @@ export const UserMoviesProvider = ({ children }) => {
             return true;
         } catch (error) {
             console.error("Error adding to watchlist:", error);
-            triggerError("Failed to add to library. Please try again.");
-            return false;
+            triggerError("Failed to sync to cloud library.");
+            return true; // Still true locally for user experience
         }
     };
 
     const removeFromWatchlist = async (movie) => {
-        if (!currentUser) return false;
+        if (!movie) return false;
+
+        // Optimistic update
+        setWatchlist(prev => {
+            const updated = (prev || []).filter(m => Number(m.id) !== Number(movie.id));
+            if (!currentUser) setLocalData(GUEST_WATCHLIST_KEY, updated);
+            return updated;
+        });
+
+        if (!currentUser) return true;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             
@@ -219,22 +271,61 @@ export const UserMoviesProvider = ({ children }) => {
             return true;
         } catch (error) {
             console.error("Error removing from watchlist:", error);
-            triggerError("Failed to remove from library. Please try again.");
-            return false;
+            triggerError("Failed to remove from cloud library.");
+            return true;
         }
     };
 
     const isWatchlisted = (movieId) => {
-        return watchlist.some(m => m.id === Number(movieId));
+        if (!movieId) return false;
+        return (watchlist || []).some(m => Number(m.id) === Number(movieId));
     };
 
     const getWatchlistStatus = (movieId) => {
-        const movie = watchlist.find(m => m.id === Number(movieId));
+        if (!movieId) return null;
+        const movie = (watchlist || []).find(m => Number(m.id) === Number(movieId));
         return movie ? movie.status : null;
     };
 
     const updateWatchlistStatus = async (movie, newStatus) => {
-        if (!currentUser) return false;
+        if (!movie) return false;
+
+        // Optimistic update
+        setWatchlist(prev => {
+            const currentList = prev || [];
+            const movieIndex = currentList.findIndex(m => Number(m.id) === Number(movie.id));
+            let updated;
+            if (movieIndex === -1) {
+                const movieWithStatus = {
+                    ...movie,
+                    id: Number(movie.id),
+                    title: movie.title || movie.name || null,
+                    name: movie.name || movie.title || null,
+                    status: newStatus,
+                    media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
+                    poster_path: movie.poster_path || null,
+                    backdrop_path: movie.backdrop_path || null,
+                    vote_average: movie.vote_average || 0,
+                    release_date: movie.release_date || movie.first_air_date || null,
+                    genre_ids: movie.genre_ids || [],
+                    addedAt: Date.now(),
+                    updatedAt: Date.now()
+                };
+                updated = [movieWithStatus, ...currentList];
+            } else {
+                updated = [...currentList];
+                updated[movieIndex] = {
+                    ...updated[movieIndex],
+                    status: newStatus,
+                    updatedAt: Date.now()
+                };
+            }
+            if (!currentUser) setLocalData(GUEST_WATCHLIST_KEY, updated);
+            return updated;
+        });
+
+        if (!currentUser) return true;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             
@@ -246,22 +337,21 @@ export const UserMoviesProvider = ({ children }) => {
                 const movieIndex = currentList.findIndex(m => Number(m.id) === Number(movie.id));
 
                 if (movieIndex === -1) {
-                    // Logic for adding new from here is tricky in transaction context,
-                    // but we can just use arrayUnion for add and handled it separately if needed.
-                    // For status updates, we expect it to exist or we add it.
                     const movieWithStatus = {
                         ...movie,
                         id: Number(movie.id),
+                        title: movie.title || movie.name || null,
+                        name: movie.name || movie.title || null,
                         status: newStatus,
                         media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
+                        poster_path: movie.poster_path || null,
+                        backdrop_path: movie.backdrop_path || null,
                         genre_ids: movie.genre_ids || [],
                         addedAt: Date.now(),
                         updatedAt: Date.now()
                     };
                     transaction.update(userRef, { watchlist: arrayUnion(movieWithStatus) });
                 } else {
-                    if (currentList[movieIndex].status === newStatus) return;
-
                     const newList = [...currentList];
                     newList[movieIndex] = {
                         ...newList[movieIndex],
@@ -272,7 +362,7 @@ export const UserMoviesProvider = ({ children }) => {
                 }
             });
 
-            // Record Activity (points system) - Note: This is outside transaction but okay as it's separate document field
+            // Record Activity (points system)
             if (newStatus === 'completed') {
                 recordActivity(3);
             } else {
@@ -284,8 +374,8 @@ export const UserMoviesProvider = ({ children }) => {
             return true;
         } catch (error) {
             console.error("Error updating watchlist status:", error);
-            triggerError("Failed to update status. Please try again.");
-            return false;
+            triggerError("Failed to sync status update.");
+            return true;
         }
     };
 
@@ -293,10 +383,11 @@ export const UserMoviesProvider = ({ children }) => {
         if (!movie) return false;
         const simpleMovie = {
             id: Number(movie.id),
-            title: movie.title || null,
-            name: movie.name || null,
+            title: movie.title || movie.name || null,
+            name: movie.name || movie.title || null,
             media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
             poster_path: movie.poster_path || null,
+            backdrop_path: movie.backdrop_path || null,
             vote_average: movie.vote_average || 0,
             release_date: movie.release_date || movie.first_air_date || null,
             genre_ids: movie.genre_ids || []
@@ -310,22 +401,33 @@ export const UserMoviesProvider = ({ children }) => {
     };
 
     const addToContinueWatching = async (movie) => {
-        if (!currentUser || !movie) return;
+        if (!movie) return;
         const simpleMovie = {
             id: Number(movie.id),
-            title: movie.title || null,
-            name: movie.name || null,
+            title: movie.title || movie.name || null,
+            name: movie.name || movie.title || null,
             media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
             poster_path: movie.poster_path || null,
+            backdrop_path: movie.backdrop_path || null,
             vote_average: movie.vote_average || 0,
             release_date: movie.release_date || movie.first_air_date || null,
             timestamp: Date.now()
         };
 
+        setContinueWatching(prev => {
+            let currentList = (prev || []).filter(m => Number(m.id) !== Number(movie.id));
+            currentList.unshift(simpleMovie);
+            if (currentList.length > 20) currentList = currentList.slice(0, 20);
+            if (!currentUser) setLocalData(GUEST_CONTINUE_KEY, currentList);
+            return currentList;
+        });
+
+        if (!currentUser) return;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             let currentList = continueWatching || [];
-            currentList = currentList.filter(m => m.id !== movie.id);
+            currentList = currentList.filter(m => Number(m.id) !== Number(movie.id));
             currentList.unshift(simpleMovie);
             if (currentList.length > 20) currentList = currentList.slice(0, 20);
             await setDoc(userRef, { continueWatching: currentList }, { merge: true });
@@ -337,10 +439,17 @@ export const UserMoviesProvider = ({ children }) => {
     };
 
     const removeFromContinueWatching = async (movieId) => {
-        if (!currentUser) return false;
+        setContinueWatching(prev => {
+            const newList = (prev || []).filter(m => Number(m.id) !== Number(movieId));
+            if (!currentUser) setLocalData(GUEST_CONTINUE_KEY, newList);
+            return newList;
+        });
+
+        if (!currentUser) return true;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
-            const newList = continueWatching.filter(m => m.id !== Number(movieId));
+            const newList = continueWatching.filter(m => Number(m.id) !== Number(movieId));
             await updateDoc(userRef, { continueWatching: newList });
             return true;
         } catch (error) {
@@ -361,7 +470,7 @@ export const UserMoviesProvider = ({ children }) => {
     };
 
     // --- ACTIVITY GRID LOGIC ---
-    const recordActivity = async (points) => {
+    const recordActivity = async (points = 1) => {
         if (!currentUser) return;
         const today = getLocalISOString();
         try {
@@ -378,7 +487,11 @@ export const UserMoviesProvider = ({ children }) => {
     };
 
     const clearWatchHistory = async () => {
-        if (!currentUser) return false;
+        setContinueWatching([]);
+        if (!currentUser) {
+            setLocalData(GUEST_CONTINUE_KEY, []);
+            return true;
+        }
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             await updateDoc(userRef, { continueWatching: [] });
@@ -390,7 +503,11 @@ export const UserMoviesProvider = ({ children }) => {
     };
 
     const clearWatchlist = async () => {
-        if (!currentUser) return false;
+        setWatchlist([]);
+        if (!currentUser) {
+            setLocalData(GUEST_WATCHLIST_KEY, []);
+            return true;
+        }
         try {
             const userRef = doc(db, 'users', currentUser.uid);
             await updateDoc(userRef, { watchlist: [] });
@@ -404,25 +521,38 @@ export const UserMoviesProvider = ({ children }) => {
     // --- FAVORITES LOGIC (Consolidated from AuthContext) ---
 
     const toggleFavorite = async (movie) => {
-        if (!currentUser) return false;
+        if (!movie) return false;
+        const simpleMovie = {
+            id: Number(movie.id),
+            title: movie.title || movie.name || null,
+            name: movie.name || movie.title || null,
+            media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
+            poster_path: movie.poster_path || null,
+            backdrop_path: movie.backdrop_path || null,
+            vote_average: movie.vote_average || 0,
+            release_date: movie.release_date || movie.first_air_date || null
+        };
+
+        const isFav = (favoriteMovies || []).some(m => Number(m.id) === Number(movie.id));
+
+        setFavoriteMovies(prev => {
+            const list = prev || [];
+            const updated = isFav
+                ? list.filter(m => Number(m.id) !== Number(movie.id))
+                : [simpleMovie, ...list];
+            if (!currentUser) setLocalData(GUEST_FAVORITES_KEY, updated);
+            return updated;
+        });
+
+        if (!currentUser) return true;
+
         try {
             const userRef = doc(db, 'users', currentUser.uid);
-            const isFav = favoriteMovies.some(m => m.id === movie.id);
-
             if (isFav) {
-                const exactMovie = favoriteMovies.find(m => m.id === movie.id);
+                const exactMovie = favoriteMovies.find(m => Number(m.id) === Number(movie.id));
                 await updateDoc(userRef, { favoriteMovies: arrayRemove(exactMovie) });
                 await mirrorToDjango(() => deleteFavorite(exactMovie || movie));
             } else {
-                const simpleMovie = {
-                    id: Number(movie.id),
-                    title: movie.title || null,
-                    name: movie.name || null,
-                    media_type: movie.media_type || (movie.name ? 'tv' : 'movie'),
-                    poster_path: movie.poster_path || null,
-                    vote_average: movie.vote_average || 0,
-                    release_date: movie.release_date || movie.first_air_date || null
-                };
                 await updateDoc(userRef, { favoriteMovies: arrayUnion(simpleMovie) });
                 await mirrorToDjango(() => createFavorite(simpleMovie));
             }
@@ -506,6 +636,7 @@ export const UserMoviesProvider = ({ children }) => {
         watchlist,
         continueWatching,
         favoriteMovies,
+        favorites: favoriteMovies,
         totalWatchTime,
         streakData,
         activityPoints,
@@ -514,6 +645,8 @@ export const UserMoviesProvider = ({ children }) => {
         getWatchlistStatus,
         updateWatchlistStatus,
         toggleWatchlist,
+        addToWatchlist,
+        removeFromWatchlist,
         addToContinueWatching,
         addWatchTime,
         removeFromContinueWatching,
