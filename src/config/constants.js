@@ -5,10 +5,10 @@ export const TMDB_BACKDROP_BASE = 'https://image.tmdb.org/t/p/w1280';
 
 export const STREAM_PROVIDERS = [
     {
-        key: 'videasy',
-        label: 'Videasy',
-        movieUrl: (id) => `https://player.videasy.to/movie/${id}`,
-        tvUrl: (id, season, episode) => `https://player.videasy.to/tv/${id}/${season}/${episode}`,
+        key: 'vidzy',
+        label: 'Vidzy',
+        movieUrl: (id) => `https://vidzy.org/movie/${id}`,
+        tvUrl: (id, season, episode) => `https://vidzy.org/serie/${id}/${season}/${episode}`,
     }
 ];
 
